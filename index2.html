@@ -1,1170 +1,409 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <title>かんじ れんしゅう あぷり（２ねんせい完全版）</title>
-  
-  <!-- クレー One（Klee One）フォントの読み込み -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
-
-  <style>
-    body { 
-      margin: 0; 
-      font-family: 'Klee One', sans-serif; 
-      background-color: #f0fdf4; /* 2年生用 爽やかな薄緑ベース */
-      color: #1e293b; 
-      user-select: none; 
-      -webkit-user-select: none;
-      overflow: hidden; 
-      width: 100vw;
-      height: 100vh;
-      overscroll-behavior: none; 
-    }
-    .screen { display: none; padding: 20px; box-sizing: border-box; width: 100vw; height: 100vh; }
-    .active { display: flex; flex-direction: column; }
-    
-    /* 共通ボタン */
-    .btn-main { font-family: 'Klee One', sans-serif; background-color: #059669; color: white; font-weight: bold; padding: 15px; border-radius: 16px; border: none; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 20px; touch-action: none; }
-    .btn-sub { font-family: 'Klee One', sans-serif; background-color: #94a3b8; color: white; font-weight: bold; padding: 12px; border-radius: 16px; border: none; cursor: pointer; font-size: 16px; touch-action: none; }
-    .btn-triple-tap { font-family: 'Klee One', sans-serif; background-color: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; color: #64748b; text-align: center; touch-action: none; }
-    .btn-action { font-family: 'Klee One', sans-serif; background-color: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px; touch-action: none; }
-    .btn-action.clear { background-color: #dc2626; }
-
-    /* ① ホーム画面 */
-    #screen-home { align-items: center; justify-content: center; }
-    .title { font-size: 36px; color: #047857; margin-bottom: 10px; font-weight: bold; text-align: center; }
-    .subtitle { font-size: 20px; color: #059669; margin-bottom: 40px; font-weight: bold; }
-    .btn-group { width: 240px; display: flex; flex-direction: column; gap: 15px; }
-    .home-sub-row { display: flex; gap: 10px; width: 100%; }
-    .home-sub-row button { flex: 1; }
-    
-    .btn-home-history { background-color: #dc2626 !important; }
-    .btn-home-settings { background-color: #2563eb !important; }
-
-    /* ② 漢字選択画面 */
-    #screen-list { max-width: 1100px; margin: 0 auto; height: 100vh; justify-content: space-between; padding-bottom: 10px; }
-    .header { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 12vh; gap: 10px; }
-    .view-title { font-size: 22px; color: #047857; margin: 0; text-align: center; font-weight: bold; }
-    .header-tools { display: flex; gap: 8px; }
-    
-    .kanji-scroll-box { height: 68vh; overflow-y: auto; background-color: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
-    
-    .genre-section { margin-bottom: 25px; }
-    .genre-title { font-size: 18px; color: #047857; margin: 0 0 10px 0; padding-left: 8px; border-left: 5px solid #34d399; font-weight: bold; }
-    .grid-kanji { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-    
-    .btn-kanji { font-family: 'Klee One', serif; height: 64px; font-weight: bold; border-radius: 12px; border: 3px solid #e2e8f0; background-color: white; cursor: pointer; font-size: 26px; touch-action: none; }
-    .btn-kanji.selected { background-color: #a7f3d0; border-color: #059669; }
-    .footer-list-area { height: 12vh; display: flex; align-items: center; justify-content: center; }
-
-    /* ③ 練習画面 */
-    #screen-practice { justify-content: flex-start; gap: 12px; padding: 15px; }
-    .top-panel { height: 22vh; display: flex; background-color: white; border-radius: 16px; padding: 10px 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); justify-content: space-around; align-items: center; border: 1px solid #d1fae5; box-sizing: border-box; gap: 8px; }
-    .model-text { font-size: 85px; font-family: 'Klee One', serif; font-weight: bold; color: #0f172a; line-height: 1; }
-    
-    .info-container { display: flex; align-items: center; gap: 10px; }
-    .info-box { background-color: #d1fae5; padding: 6px 12px; border-radius: 12px; border: 1px solid #a7f3d0; min-width: 150px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
-    .info-reading { font-size: 16px; font-weight: bold; color: #1e293b; background-color: white; margin: 3px 0 0 0; padding: 2px; border-radius: 6px; white-space: nowrap; }
-    
-    .btn-speak-master { font-family: 'Klee One', sans-serif; background-color: #e0f2fe; border: 2px solid #bae6fd; border-radius: 12px; padding: 12px 14px; font-size: 14px; font-weight: bold; color: #0369a1; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; line-height: 1.2; touch-action: none; }
-    .btn-speak-master:disabled { opacity: 0.5; cursor: not-allowed; background-color: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; }
-
-    .tool-box { display: flex; flex-direction: column; gap: 8px; }
-    .btn-tool { font-family: 'Klee One', sans-serif; padding: 8px 16px; font-size: 14px; font-weight: bold; border: 2px solid #cbd5e1; background-color: white; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 5px; touch-action: none; }
-    .btn-tool.active { background-color: #3b82f6; color: white; border-color: #2563eb; }
-
-    /* 下部パネル */
-    .bottom-panel { height: 60vh; background-color: rgba(241, 245, 249, 0.6); border-radius: 16px; padding: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
-    .grid-cells { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 12px; width: 100%; height: 100%; }
-    
-    .cell-container { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #cbd5e1; border-radius: 12px; background-color: #fff; position: relative; box-sizing: border-box; height: 100%; }
-    .cell-num { position: absolute; top: 6px; left: 10px; font-size: 13px; font-weight: bold; color: #94a3b8; z-index: 20; }
-    
-    .canvas-area { position: relative; width: 160px; height: 160px; border: 1px solid #e2e8f0; background-color: #f8fafc; border-radius: 8px; overflow: hidden; }
-    .canvas-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 110px; color: #e2e8f0; font-family: 'Klee One', serif; pointer-events: none; transition: opacity 0.1s ease; }
-    .guide-h { position: absolute; top: 50%; left: 0; width: 100%; border-top: 1px dashed #e2e8f0; pointer-events: none; }
-    .guide-v { position: absolute; left: 50%; top: 0; height: 100%; border-left: 1px dashed #e2e8f0; pointer-events: none; }
-    canvas { position: absolute; inset: 0; z-index: 10; cursor: crosshair; touch-action: none; }
-    
-    .footer-area { height: 8vh; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
-    #btn-next { font-family: 'Klee One', sans-serif; width: 100%; max-width: 450px; background-color: #059669; color: white; font-weight: bold; padding: 10px; border-radius: 30px; font-size: 20px; border: none; cursor: pointer; box-shadow: 0 10px 15px rgba(5,150,105,0.3); display: none; touch-action: none; }
-    #text-guide { font-size: 15px; color: #94a3b8; margin: 0; font-weight: bold; }
-
-    /* ④ りれき一覧画面 */
-    #screen-history-gallery { max-width: 1100px; margin: 0 auto; height: 100vh; justify-content: space-between; padding-bottom: 10px; }
-    .gallery-header { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 12vh; gap: 10px; box-sizing: border-box; }
-    .gallery-title { font-size: 22px; color: #047857; font-weight: bold; margin: 0; text-align: center; }
-    .gallery-scroll { height: 84vh; overflow-y: auto; background-color: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 20px; box-sizing: border-box; width: 100%; -webkit-overflow-scrolling: touch; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .gallery-item { border: 2px solid #cbd5e1; border-radius: 12px; overflow: hidden; background-color: #fff; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; position: relative; }
-    .gallery-item:active { transform: scale(0.95); }
-    .gallery-item img { width: 100%; height: auto; display: block; }
-    .gallery-item-label { background-color: #f1f5f9; text-align: center; padding: 5px; font-weight: bold; font-size: 13px; color: #475569; border-top: 1px solid #cbd5e1; line-height: 1.3; }
-    .gallery-empty { text-align: center; color: #94a3b8; font-size: 18px; font-weight: bold; width: 100%; padding-top: 100px; grid-column: span 4; }
-
-    /* 全画面共通オーバーレイ */
-    .overlay { display: none; position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-    .overlay-content { max-width: 90vw; max-height: 85vh; background-color: white; border-radius: 20px; padding: 20px; box-sizing: border-box; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; display: flex; flex-direction: column; align-items: center; }
-    .overlay-content img { max-width: 100%; max-height: 70vh; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 10px; }
-    .overlay-close { position: absolute; top: -20px; right: -20px; background-color: #dc2626; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
-    .overlay-label { margin-top: 12px; font-size: 20px; font-weight: bold; color: #1e293b; text-align: center; }
-
-    /* 設定ポップアップ */
-    .settings-box { width: 320px; padding: 10px 5px; text-align: center; }
-    .settings-title { font-size: 22px; color: #047857; font-weight: bold; margin: 0 0 20px 0; }
-    .settings-row { margin-bottom: 25px; text-align: left; }
-    .settings-label { font-size: 16px; font-weight: bold; color: #475569; margin-bottom: 8px; display: block; }
-    .slider-container { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    input[type="range"] { flex: 1; height: 8px; border-radius: 4px; background: #cbd5e1; accent-color: #3b82f6; cursor: pointer; touch-action: auto !important; }
-    .preview-circle-box { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #cbd5e1; border-radius: 8px; }
-    .preview-circle { background-color: #333333; border-radius: 50%; transition: width 0.1s, height 0.1s; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>かんじ クイズ</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+        h1 {
+            color: #ff6f61;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        #menu-screen, #quiz-screen, #result-screen {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .category-section {
+            margin-bottom: 25px;
+            text-align: left;
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #ffcc00;
+        }
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            border-left: 5px solid #e67e22;
+        }
+        .kanji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+        }
+        .kanji-btn {
+            font-size: 1.8rem;
+            padding: 5px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kanji-btn:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: scale(1.05);
+        }
+        .kanji-btn.selected {
+            background: #2196f3;
+            color: white;
+            border-color: #0d47a1;
+        }
+        .control-btn {
+            font-size: 1.2rem;
+            padding: 12px 30px;
+            margin: 15px 5px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .start-btn { background: #4caf50; color: white; }
+        .start-btn:hover { background: #45a049; }
+        .back-btn { background: #f44336; color: white; }
+        .back-btn:hover { background: #da190b; }
+        
+        #kanji-display {
+            font-size: 8rem;
+            margin: 40px 0;
+            font-weight: bold;
+            color: #2c3e50;
+            min-height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .choice-btn {
+            font-size: 1.8rem;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .choice-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        #score-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #7f8c8d;
+        }
+        #result-text {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 30px 0;
+            color: #2ecc71;
+        }
+    </style>
 </head>
 <body>
 
-  <div id="screen-home" class="screen active">
-    <h1 class="title">かんじ れんしゅう あぷり</h1>
-    <div class="subtitle">🍀 ２ねんせい かんぜんばん 🍀</div>
-    <div class="btn-group">
-      <button class="btn-main" onclick="goToTransit()">スタート 🚀</button>
-      <div class="home-sub-row">
-        <button class="btn-sub btn-home-history" onclick="openHistoryGallery()">りれき 📷</button>
-        <button class="btn-sub btn-home-settings" onclick="openSettingsModal()">せってい ⚙️</button>
-      </div>
-    </div>
-  </div>
+    <h1>かんじ クイズ</h1>
 
-  <div id="screen-list" class="screen">
-    <div class="header">
-      <button class="btn-triple-tap" onclick="handleTripleTap(this, () => { exitAndResetKanji(); changeScreen('HOME'); })">🏠 もどる<br><span style="font-size:9px;color:#94a3b8;">(3かい とんとん)</span></button>
-      <h2 class="view-title">れんしゅうする かんじを えらぼう</h2>
-      <div class="header-tools">
-        <button class="btn-action" onclick="selectAllKanji()">ぜんぶえらぶ</button>
-        <button class="btn-action clear" onclick="clearAllKanji()">クリア</button>
-      </div>
-    </div>
-    
-    <div class="kanji-scroll-box" id="kanji-selector-box"></div>
-    
-    <div class="footer-list-area">
-      <button class="btn-main" id="btn-start-practice" onclick="startPractice()" disabled style="background-color: #cbd5e1; color: #64748b; cursor: not-allowed; padding: 12px 50px; border-radius: 30px;">れんしゅうを はじめる (0文字)</button>
-    </div>
-  </div>
-
-  <div id="screen-practice" class="screen">
-    <div class="top-panel">
-      <button class="btn-triple-tap" onclick="handleTripleTap(this, () => { exitAndResetKanji(); changeScreen('KANJI_LIST'); })">↩ やめる<br><span style="font-size:9px;color:#94a3b8;">(3かい とんとん)</span></button>
-
-      <div style="text-align: center;">
-        <span class="model-text" id="practice-model">万</span>
-      </div>
-
-      <div class="info-container">
-        <div class="info-box">
-          <h3 style="margin:0; font-size:12px; color:#047857;">よみかた</h3>
-          <p class="info-reading" id="practice-reading">まん</p>
-          <p class="info-reading" id="practice-reading2" style="display:none; color:#475569; background-color:#f1f5f9; border:1px solid #e2e8f0;"></p>
-          <p id="practice-progress" style="font-size:11px; color:#64748b; margin:4px 0 0 0;">進捗: 1 / 1</p>
+    <!-- メニュー画面 -->
+    <div id="menu-screen">
+        <p style="font-size: 1.2rem; margin-bottom: 20px;">クイズにだしたい漢字をえらんでね！（なんこでもOK）</p>
+        <div style="margin-bottom: 15px;">
+            <button class="control-btn" style="background:#9e9e9e; color:white; padding: 6px 15px; font-size: 0.9rem;" onclick="selectAllKanji(true)">すべてえらぶ</button>
+            <button class="control-btn" style="background:#9e9e9e; color:white; padding: 6px 15px; font-size: 0.9rem;" onclick="selectAllKanji(false)">ぜんぶ消す</button>
         </div>
-        <button id="btn-master-speak" class="btn-speak-master" onclick="triggerMasterSpeak()">
-          よみかた<br>🔊
-        </button>
-      </div>
-
-      <div class="tool-box">
-        <button id="tool-pen" class="btn-tool active" onclick="setTool('pen')">✏️ ペン</button>
-        <button id="tool-eraser" class="btn-tool" onclick="setTool('eraser')">🧽 けしごむ</button>
-      </div>
-    </div>
-
-    <div class="bottom-panel" id="practice-bg-panel">
-      <div class="grid-cells" id="cells-container"></div>
-    </div>
-
-    <div class="footer-area">
-      <button id="btn-next" onclick="captureAndNextKanji()">つぎの かんじへ ➡️</button>
-      <p id="text-guide">6この ます ぜんぶに かいてみよう！</p>
-    </div>
-  </div>
-
-  <div id="screen-history-gallery" class="screen">
-    <div class="gallery-header">
-      <button class="btn-sub" onclick="changeScreen('HOME')" style="padding: 12px 20px;">🏠 ホームにもどる</button>
-      <h2 class="gallery-title">れんしゅうの りれき 📷</h2>
-      <button class="btn-action clear" onclick="clearHistoryGallery()" style="padding: 12px 20px; border-radius: 12px;">りれきを消す</button>
-    </div>
-    <div class="gallery-scroll">
-      <div class="gallery-grid" id="gallery-items-grid"></div>
-    </div>
-  </div>
-
-  <div id="gallery-overlay" class="overlay" onclick="closeOverlay()">
-    <div class="overlay-content" onclick="event.stopPropagation()">
-      <button class="overlay-close" onclick="closeOverlay()">❌</button>
-      <img id="overlay-img" src="" alt="拡大表示">
-      <div id="overlay-label" class="overlay-label">漢字の名前</div>
-    </div>
-  </div>
-
-  <div id="settings-overlay" class="overlay" onclick="closeSettingsModal()">
-    <div class="overlay-content" onclick="event.stopPropagation()">
-      <button class="overlay-close" onclick="closeSettingsModal()">❌</button>
-      <div class="settings-box">
-        <h2 class="settings-title">あぷりの せってい ⚙️</h2>
         
-        <div class="settings-row">
-          <label class="settings-label">✏️ ペンの ふとさ</label>
-          <div class="slider-container">
-            <input type="range" id="pen-width-slider" min="2" max="20" value="6" oninput="updatePenWidthPreview(this.value)">
-            <div class="preview-circle-box">
-              <div id="pen-preview-circle" class="preview-circle"></div>
-            </div>
-          </div>
+        <div id="category-container"></div>
+        
+        <button class="control-btn start-btn" onclick="startQuiz()">クイズ スタート！</button>
+    </div>
+
+    <!-- クイズ画面 -->
+    <div id="quiz-screen" style="display: none;">
+        <div id="score-display">もんめ: <span id="current-question">1</span> / <span id="total-questions">0</span></div>
+        <div id="kanji-display"></div>
+        <div class="choice-grid">
+            <button class="choice-btn" onclick="checkAnswer(0)"></button>
+            <button class="choice-btn" onclick="checkAnswer(1)"></button>
+            <button class="choice-btn" onclick="checkAnswer(2)"></button>
+            <button class="choice-btn" onclick="checkAnswer(3)"></button>
         </div>
-
-        <button class="btn-main" onclick="closeSettingsModal()" style="width:100%; padding:10px; font-size:16px; border-radius:12px;">とじる</button>
-      </div>
+        <button class="control-btn back-btn" onclick="backToMenu()">メニューにもどる</button>
     </div>
-  </div>
 
-  <script>
-    // iPad Safari 固定ガード
-    (function() {
-      document.addEventListener('touchmove', function(e) {
-        let isScrollableArea = e.target.closest('.kanji-scroll-box') || e.target.closest('.gallery-scroll');
-        if (!isScrollableArea) {
-          e.preventDefault();
-        }
-      }, { passive: false });
+    <!-- 結果画面 -->
+    <div id="result-screen" style="display: none;">
+        <h2>クイズおわり！</h2>
+        <div id="result-text"></div>
+        <button class="control-btn start-btn" onclick="backToMenu()">もういちど あそぶ</button>
+    </div>
 
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', function(e) {
-        let now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300 && !e.target.classList.contains('btn-triple-tap')) {
-          e.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
-    })();
-
-    // 💡 小学2年生の必修漢字 すべて（160文字）をジャンル別に分類
-    const KANJI_DATA = [
-      // 1. 数・時間・単位 (18文字)
-      { id: '2_1', char: '万', reading: 'まん', reading2: 'ばん', genre: '数・時間・単位' },
-      { id: '2_2', char: '丸', reading: 'まる', reading2: 'がん', genre: '数・時間・単位' },
-      { id: '2_3', char: '交', reading: 'まじ（わる）', reading2: 'こう', genre: '数・時間・単位' },
-      { id: '2_4', char: '光', reading: 'ひかり', reading2: 'こう', genre: '数・時間・単位' },
-      { id: '2_5', char: '回', reading: 'まわ（る）', reading2: 'かい', genre: '数・時間・単位' },
-      { id: '2_6', char: '多', reading: 'おお（い）', reading2: 'た', genre: '数・時間・単位' },
-      { id: '2_7', char: '少', reading: 'すく（ない）', reading2: 'しょう', genre: '数・時間・単位' },
-      { id: '2_8', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: '数・時間・単位' },
-      { id: '2_9', char: '細', reading: 'ほそ（い）', reading2: 'さい', genre: '数・時間・単位' },
-      { id: '2_10', char: '半', reading: 'はん', reading2: 'なか（ば）', genre: '数・時間・単位' },
-      { id: '2_11', char: '時', reading: 'じ', reading2: 'とき', genre: '数・時間・単位' },
-      { id: '2_12', char: '分', reading: 'ふん', reading2: 'わ（かる）', genre: '数・時間・単位' },
-      { id: '2_13', char: '週', reading: 'しゅう', genre: '数・時間・単位' },
-      { id: '2_14', char: '曜', reading: 'よう', genre: '数・時間・単位' },
-      { id: '2_15', char: '間', reading: 'かん', reading2: 'あいだ', genre: '数・時間・単位' },
-      { id: '2_16', char: '毎', reading: 'まい', genre: '数・時間・単位' },
-      { id: '2_17', char: '計', reading: 'はか（る）', reading2: 'けい', genre: '数・時間・単位' },
-      { id: '2_18', char: '算', reading: 'さん', genre: '数・時間・単位' },
-
-      // 2. 方角・位置 (14文字)
-      { id: '2_19', char: '東', reading: 'ひがし', reading2: 'とう', genre: '方角・位置' },
-      { id: '2_20', char: '西', reading: 'にし', reading2: 'せい', genre: '方角・位置' },
-      { id: '2_21', char: '南', reading: 'みなみ', reading2: 'なん', genre: '方角・位置' },
-      { id: '2_22', char: '北', reading: 'きた', reading2: 'ほく', genre: '方角・位置' },
-      { id: '2_23', char: '前', reading: 'まえ', reading2: 'ぜん', genre: '方角・位置' },
-      { id: '2_24', char: '後', reading: 'うしろ', reading2: 'ご・あと', genre: '方角・位置' },
-      { id: '2_25', char: '左', reading: 'ひだり', reading2: 'さ', genre: '方角・位置' },
-      { id: '2_26', char: '右', reading: 'みぎ', reading2: 'う', genre: '方角・位置' },
-      { id: '2_27', char: '内', reading: 'うち', reading2: 'ない', genre: '方角・位置' },
-      { id: '2_28', char: '外', reading: 'そと', reading2: 'がい', genre: '方角・位置' },
-      { id: '2_29', char: '遠', reading: 'とお（い）', reading2: 'えん', genre: '方角・位置' },
-      { id: '2_30', char: '近', reading: 'ちか（い）', reading2: 'きん', genre: '方角・位置' },
-      { id: '2_31', char: '高', reading: 'たか（い）', reading2: 'こう', genre: '方角・位置' },
-      { id: '2_32', char: '長', reading: 'なが（い）', reading2: 'ちょう', genre: '方角・位置' },
-
-      // 3. 自然・生き物・天気 (17文字)
-      { id: '2_33', char: '風', reading: 'かぜ', reading2: 'ふう', genre: '自然・生き物・天気' },
-      { id: '2_34', char: '雪', reading: 'ゆき', reading2: 'せつ', genre: '自然・生き物・天気' },
-      { id: '2_35', char: '雲', reading: 'くも', reading2: 'うん', genre: '自然・生き物・天気' },
-      { id: '2_36', char: '電', reading: 'でん', genre: '自然・生き物・天気' },
-      { id: '2_37', char: '星', reading: 'ほし', reading2: 'せい', genre: '自然・生き物・天気' },
-      { id: '2_38', char: '岩', reading: 'いわ', reading2: 'がん', genre: '自然・生き物・天気' },
-      { id: '2_39', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
-      { id: '2_40', char: '池', reading: 'いけ', reading2: 'ち', genre: '自然・生き物・天気' },
-      { id: '2_41', char: '海', reading: 'うみ', reading2: 'かい', genre: '自然・生き物・天気' },
-      { id: '2_42', char: '地', reading: 'ち', reading2: 'じ', genre: '自然・生き物・天気' },
-      { id: '2_43', char: '毛', reading: 'け', reading2: 'もう', genre: '自然・生き物・天気' },
-      { id: '2_44', char: '肉', reading: 'にく', genre: '自然・生き物・天気' },
-      { id: '2_45', char: '馬', reading: 'うま', reading2: 'ば', genre: '自然・生き物・天気' },
-      { id: '2_46', char: '鳥', reading: 'とり', reading2: 'ちょう', genre: '自然・生き物・天気' },
-      { id: '2_47', char: '魚', reading: 'さかな', reading2: 'ぎょ', genre: '自然・生き物・天気' },
-      { id: '2_48', char: '麦', reading: 'むぎ', reading2: 'ばく', genre: '自然・生き物・天気' },
-      { id: '2_49', char: '草', reading: 'くさ', reading2: 'そう', genre: '自然・生き物・天気' },
-
-      // 4. 学校・学習・場所 (18文字)
-      { id: '2_50', char: '組', reading: 'くみ', reading2: 'そ', genre: '学校・学習・場所' },
-      { id: '2_51', char: '室', reading: 'しつ', reading2: 'むろ', genre: '学校・学習・場所' },
-      { id: '2_52', char: '図', reading: 'ず', reading2: 'と', genre: '学校・学習・場所' },
-      { id: '2_53', char: '書', reading: 'か（く）', reading2: 'しょ', genre: '学校・学習・場所' },
-      { id: '2_54', char: '紙', reading: 'かみ', reading2: 'し', genre: '学校・学習・場所' },
-      { id: '2_55', char: '画', reading: 'が', reading2: 'かく', genre: '学校・学習・場所' },
-      { id: '2_56', char: '絵', reading: 'え', reading2: 'かい', genre: '学校・学習・場所' },
-      { id: '2_57', char: '工', reading: 'こう', reading2: 'く', genre: '学校・学習・場所' },
-      { id: '2_58', char: '用', reading: 'もち（いる）', reading2: 'よう', genre: '学校・学習・場所' },
-      { id: '2_59', char: '強', reading: 'つよ（い）', reading2: 'きょう', genre: '学校・学習・場所' },
-      { id: '2_60', char: '弱', reading: 'よわ（い）', reading2: 'じゃく', genre: '学校・学習・場所' },
-      { id: '2_61', char: '科', reading: 'か', genre: '学校・学習・場所' },
-      { id: '2_62', char: '歌', reading: 'うた', reading2: 'か', genre: '学校・学習・場所' },
-      { id: '2_63', char: '数', reading: 'かず・かぞ（える）', reading2: 'すう', genre: '学校・学習・場所' },
-      { id: '2_64', char: '語', reading: 'かた（る）', reading2: 'ご', genre: '学校・学習・場所' },
-      { id: '2_65', char: '話', reading: 'はな（す）', reading2: 'わ', genre: '学校・学習・場所' },
-      { id: '2_66', char: '読', reading: 'よ（む）', reading2: 'どく', genre: '学校・学習・場所' },
-      { id: '2_67', char: '記', reading: 'しる（す）', reading2: 'き', genre: '学校・学習・場所' },
-
-      // 5. 体・ひと・家族 (15文字)
-      { id: '2_68', char: '頭', reading: 'あたま', reading2: 'とう', genre: '体・ひと・家族' },
-      { id: '2_69', char: '顔', reading: 'かお', reading2: 'がん', genre: '体・ひと・家族' },
-      { id: '2_70', char: '首', reading: 'くび', reading2: 'しゅ', genre: '体・ひと・家族' },
-      { id: '2_71', char: '心', reading: 'こころ', reading2: 'しん', genre: '体・ひと・家族' },
-      { id: '2_72', char: '体', reading: 'からだ', reading2: 'たい', genre: '体・ひと・家族' },
-      { id: '2_73', char: '親', reading: 'おや・した（しい）', reading2: 'しん', genre: '体・ひと・家族' },
-      { id: '2_74', char: '兄', reading: 'あに', reading2: 'きょう', genre: '体・ひと・家族' },
-      { id: '2_75', char: '姉', reading: 'あね', reading2: 'し', genre: '体・ひと・家族' },
-      { id: '2_76', char: '弟', reading: 'おとうと', reading2: 'だい', genre: '体・ひと・家族' },
-      { id: '2_77', char: '妹', reading: 'いもうと', reading2: 'まい', genre: '体・ひと・家族' },
-      { id: '2_78', char: '私', reading: 'わたし・わたくし', reading2: 'し', genre: '体・ひと・家族' },
-      { id: '2_79', char: '古', reading: 'ふる（い）', reading2: 'こ', genre: '体・ひと・家族' },
-      { id: '2_80', char: '新', reading: 'あたら（しい）', reading2: 'しん', genre: '体・ひと・家族' },
-      { id: '2_81', char: '才', reading: 'さい', genre: '体・ひと・家族' },
-      { id: '2_82', char: '同', reading: 'おな（じ）', reading2: 'どう', genre: '体・ひと・家族' },
-
-      // 6. ようす・うごき（生活） (20文字)
-      { id: '2_83', char: '朝', reading: 'あさ', reading2: 'ちょう', genre: 'ようす・うごき（生活）' },
-      { id: '2_84', char: '昼', reading: 'ひる', reading2: 'ちゅう', genre: 'ようす・うごき（生活）' },
-      { id: '2_85', char: '夜', reading: 'よる', reading2: 'や', genre: 'ようす・うごき（生活）' },
-      { id: '2_86', char: '晴', reading: 'はれ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
-      { id: '2_87', char: '春', reading: 'はる', reading2: 'しゅん', genre: 'ようす・うごき（生活）' },
-      { id: '2_88', char: '夏', reading: 'なつ', reading2: 'か', genre: 'ようす・うごき（生活）' },
-      { id: '2_89', char: '秋', reading: 'あき', reading2: 'しゅう', genre: 'ようす・うごき（生活）' },
-      { id: '2_90', char: '冬', reading: 'ふゆ', reading2: 'とう', genre: 'ようす・うごき（生活）' },
-      { id: '2_91', char: '明', reading: 'あか（るい）', reading2: 'めい', genre: 'ようす・うごき（生活）' },
-      { id: '2_92', char: '暗', reading: 'くら（い）', reading2: 'あん', genre: 'ようす・うごき（生活）' },
-      { id: '2_93', char: '活', reading: 'かつ', genre: 'ようす・うごき（生活）' },
-      { id: '2_94', char: '楽', reading: 'たの（しい）', reading2: 'がく・らく', genre: 'ようす・うごき（生活）' },
-      { id: '2_95', char: '止', reading: 'と（まる）', reading2: 'し', genre: 'ようす・うごき（生活）' },
-      { id: '2_96', char: '歩', reading: 'ある（く）', reading2: 'ほ', genre: 'ようす・うごき（生活）' },
-      { id: '2_97', char: '走', reading: 'はし（る）', reading2: 'そう', genre: 'ようす・うごき（生活）' },
-      { id: '2_98', char: '思', reading: 'おも（う）', reading2: 'し', genre: 'ようす・うごき（生活）' },
-      { id: '2_99', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'ようす・うごき（生活）' },
-      { id: '2_100', char: '知', reading: 'し（る）', reading2: 'ち', genre: 'ようす・うごき（生活）' },
-      { id: '2_101', char: '言', reading: 'い（う）', reading2: 'げん・ごん', genre: 'ようす・うごき（生活）' },
-      { id: '2_102', char: '声', reading: 'こえ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
-
-      // 7. ようす・うごき（行動・変化） (21文字)
-      { id: '2_103', char: '作', reading: 'つく（る）', reading2: 'さく', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_104', char: '売', reading: 'う（る）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_105', char: '買', reading: 'か（う）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_106', char: '引', reading: 'ひ（く）', reading2: 'いん', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_107', char: '羽', reading: 'はね・は', reading2: 'う', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_108', char: '答', reading: 'こた（える）', reading2: 'とう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_109', char: '鳴', reading: 'な（く）', reading2: 'めい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_110', char: '矢', reading: 'や', reading2: 'し', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_111', char: '形', reading: 'かたち', reading2: 'けい・ぎょう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_112', char: '変', reading: 'か（わる）', reading2: 'へん', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_113', char: '切', reading: 'き（る）', reading2: 'せつ', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_114', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: 'ようす・うごき（行動・変化）' }, // 分類重複回避用の重複考慮
-      { id: '2_115', char: '直', reading: 'なお（す）', reading2: 'ちょく・じき', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_116', char: '通', reading: 'とお（る）', reading2: 'つう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_117', char: '進', reading: 'すす（む）', reading2: 'しん', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_118', char: '返', reading: 'かえ（す）', reading2: 'へん', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_119', char: '送', reading: 'おく（る）', reading2: 'そう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_120', char: '追', reading: 'お（う）', reading2: 'つい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_121', char: '重', reading: 'おも（い）・かさ（ねる）', reading2: 'じゅう・ちょう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_122', char: '広', reading: 'ひろ（い）', reading2: 'こう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_123', char: '合', reading: 'あ（う）', reading2: 'ごう', genre: 'ようす・うごき（行動・変化）' },
-
-      // 8. 社会・国・たてもの (21文字)
-      { id: '2_124', char: '市', reading: 'いち', reading2: 'し', genre: '社会・国・たてもの' },
-      { id: '2_125', char: '町', reading: 'まち', reading2: 'ちょう', genre: '社会・国・たてもの' },
-      { id: '2_126', char: '村', reading: 'むら', reading2: 'そん', genre: '社会・国・たてもの' },
-      { id: '2_127', char: '区', reading: 'く', genre: '社会・国・たてもの' },
-      { id: '2_128', char: '県', reading: 'けん', genre: '社会・国・たてもの' },
-      { id: '2_129', char: '国', reading: 'くに', reading2: 'こく', genre: '社会・国・たてもの' },
-      { id: '2_130', char: '社', reading: 'やしろ', reading2: 'しゃ', genre: '社会・国・たてもの' },
-      { id: '2_131', char: '店', reading: 'みせ', reading2: 'てん', genre: '社会・国・たてもの' },
-      { id: '2_132', char: '駅', reading: 'えき', genre: '社会・国・たてもの' },
-      { id: '2_133', char: '家', reading: 'いえ・や', reading2: 'か', genre: '社会・国・たてもの' },
-      { id: '2_134', char: '寺', reading: 'てら', reading2: 'じ', genre: '社会・国・たてもの' },
-      { id: '2_135', char: '院', reading: 'いん', genre: '社会・国・たてもの' },
-      { id: '2_136', char: '門', reading: 'かど', reading2: 'もん', genre: '社会・国・たてもの' },
-      { id: '2_137', char: '場', reading: 'ば', reading2: 'じょう', genre: '社会・国・たてもの' },
-      { id: '2_138', char: '園', reading: 'その', reading2: 'えん', genre: '社会・国・たてもの' },
-      { id: '2_139', char: '道', reading: 'みち', reading2: 'どう', genre: '社会・国・たてもの' },
-      { id: '2_140', char: '谷', reading: 'たに', reading2: 'こく', genre: '社会・国・たてもの' },
-      { id: '2_141', char: '野', reading: 'の', reading2: 'や', genre: '社会・国・たてもの' },
-      { id: '2_142', char: '原', reading: 'はら', reading2: 'げん', genre: '社会・国・たてもの' },
-      { id: '2_143', char: '戸', reading: 'と', reading2: 'こ', genre: '社会・国・たてもの' },
-      { id: '2_144', char: '京', reading: 'きょう', reading2: 'けい', genre: '社会・国・たてもの' },
-
-      // 9. いろいろな言葉・その他 (16文字)
-      { id: '2_145', char: '心', reading: 'こころ', reading2: 'しん', genre: 'いろいろな言葉・その他' },
-      { id: '2_146', char: '米', reading: 'こめ', reading2: 'べい・まい', genre: 'いろいろな言葉・その他' },
-      { id: '2_147', char: '茶', reading: 'ちゃ', reading2: 'さ', genre: 'いろいろな言葉・その他' },
-      { id: '2_148', char: '肉', reading: 'にく', genre: 'いろいろな言葉・その他' },
-      { id: '2_149', char: '当', reading: 'あ（たる）', reading2: 'とう', genre: 'いろいろな言葉・その他' },
-      { id: '2_150', char: '交', reading: 'まじ（わる）', reading2: 'こう', genre: 'いろいろな言葉・その他' },
-      { id: '2_151', char: '会', reading: 'あ（う）', reading2: 'かい', genre: 'いろいろな言葉・その他' },
-      { id: '2_152', char: '光', reading: 'ひかり', reading2: 'こう', genre: 'いろいろな言葉・その他' },
-      { id: '2_153', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'いろいろな言葉・その他' },
-      { id: '2_154', char: '理', reading: 'り', genre: 'いろいろな言葉・その他' },
-      { id: '2_155', char: '元', reading: 'もと', reading2: 'げん・がん', genre: 'いろいろな言葉・その他' },
-      { id: '2_156', char: '方', reading: 'かた', reading2: 'ほう', genre: 'いろいろな言葉・その他' },
-      { id: '2_157', char: '毛', reading: 'け', reading2: 'もう', genre: 'いろいろな言葉・その他' },
-      { id: '2_158', char: '万', reading: 'まん', reading2: 'ばん', genre: 'いろいろな言葉・その他' },
-      { id: '2_159', char: '丸', reading: 'まる', reading2: 'がん', genre: 'いろいろな言葉・その他' },
-      { id: '2_160', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: 'いろいろな言葉・その他' }
-    ];
-
-    // ※ 重複調整：文科省160字の完全一致リストを生成
-    const MASTER_160_CHARS = [
-      "引", "羽", "雲", "園", "遠", "何", "科", "夏", "家", "歌", "画", "回", "会", "海", "絵", "外", "角", "楽", "活", "間",
-      "丸", "岩", "顔", "汽", "記", "帰", "弓", "牛", "魚", "京", "強", "教", "近", "兄", "形", "計", "元", "言", "原", "戸",
-      "古", "午後", "工", "公", "広", "交", "光", "考", "行", "高", "黄", "合", "谷", "国", "黒", "今", "才", "細", "作", "算",
-      "三", "姉", "市", "思", "指", "止", "自身", "事", "持", "時", "次", "治", "自", "辞", "鹿", "失", "室", "芝", "写", "社",
-      "者", "謝", "車", "若", "主", "取", "手", "種", "首", "秋", "週", "春", "書", "少", "場", "情", "織", "職", "色", "食",
-      "心", "新", "親", "図", "数", "西", "声", "星", "晴", "正", "生", "青", "静", "席", "積", "切", "説", "雪", "絶", "舌",
-      "線", "選", "船", "前", "然", "全", "組", "創", "双", "走", "送", "足", "族", "他", "打", "対", "待", "代", "台", "大",
-      "第", "題", "滝", "卓", "宅", "拓", "沢", "濯", "炭", "短", "談", "地", "池", "茶", "着", "中", "昼", "柱", "注", "虫",
-      "町", "鳥", "朝", "長", "直", "通", "痛", "塚", "漬", "坪", "釣", "鶴", "低", "定", "庭", "泥", "的", "鉄", "徹", "撤",
-      "店", "点", "伝", "田", "電", "登", "都", "吐", "怒", "度", "渡", "刀", "冬", "島", "東", "当", "答", "等", "頭", "働",
-      "動", "同", "堂", "童", "内", "肉", "南", "二", "日", "入", "忍", "馬", "俳", "敗", "買", "売", "麦", "箱", "畑", "肌",
-      "八", "発", "髪", "半", "反", "坂", "板", "版", "犯", "班", "判", "飯", "挽", "皮", "悲", "美", "鼻", "筆", "百", "氷",
-      "表", "秒", "病", "不", "付", "夫", "婦", "富", "布", "府", "父", "負", "武", "舞", "風", "文", "聞", "分", "平", "兵",
-      "別", "返", "勉", "弁", "保", "歩", "方", "法", "放", "訪", "豊", "忘", "忙", "房", "暴", "望", "枚", "毎", "妹", "幕",
-      "豆", "味", "未", "無", "名", "明", "鳴", "命", "麺", "木", "目", "問", "門", "夜", "野", "矢", "薬", "由", "油", "曜",
-      "用", "洋", "様", "葉", "陽", "養", "欲", "抑", "翌", "来", "頼", "藍", "落", "裏", "理", "里", "利", "陸", "率", "立",
-      "流", "留", "硫", "粒", "隆", "旅", "両", "緑", "林", "厘", "倫", "輪", "類", "令", "礼", "冷", "励", "嶺", "例", "歴",
-      "列", "練", "連", "廉", "老", "労", "ろう", "廊", "朗", "楼", "漏", "路", "露", "呂", "暮", "録", "論", "倭", "和", "話"
-    ];
-
-    // ※ 160文字すべての定義を正確に展開
-    const ALL_160_KANJI = [
-      { id: '2_1', char: '引', reading: 'ひ（く）', reading2: 'いん', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_2', char: '羽', reading: 'はね・は', reading2: 'う', genre: '自然・生き物・天気' },
-      { id: '2_3', char: '雲', reading: 'くも', reading2: 'うん', genre: '自然・生き物・天気' },
-      { id: '2_4', char: '園', reading: 'その', reading2: 'えん', genre: '社会・国・たてもの' },
-      { id: '2_5', char: '遠', reading: 'とお（い）', reading2: 'えん', genre: '方角・位置' },
-      { id: '2_6', char: '何', reading: 'なに・なん', reading2: 'か', genre: 'いろいろな言葉・その他' },
-      { id: '2_7', char: '科', reading: 'か', genre: '学校・学習・場所' },
-      { id: '2_8', char: '夏', reading: 'なつ', reading2: 'か', genre: 'ようす・うごき（生活）' },
-      { id: '2_9', char: '家', reading: 'いえ・や', reading2: 'か', genre: '社会・国・たてもの' },
-      { id: '2_10', char: '歌', reading: 'うた', reading2: 'か', genre: '学校・学習・場所' },
-      { id: '2_11', char: '画', reading: 'が・かく', reading2: 'が', genre: '学校・学習・場所' },
-      { id: '2_12', char: '回', reading: 'まわ（る）', reading2: 'かい', genre: '数・時間・単位' },
-      { id: '2_13', char: '会', reading: 'あ（う）', reading2: 'かい', genre: 'ようす・うごき（生活）' },
-      { id: '2_14', char: '海', reading: 'うみ', reading2: 'かい', genre: '自然・生き物・天気' },
-      { id: '2_15', char: '絵', reading: 'え', reading2: 'かい', genre: '学校・学習・場所' },
-      { id: '2_16', char: '外', reading: 'そと', reading2: 'がい', genre: '方角・位置' },
-      { id: '2_17', char: '角', reading: 'かど・つの', reading2: 'かく', genre: 'いろいろな言葉・その他' },
-      { id: '2_18', char: '楽', reading: 'たの（しい）', reading2: 'がく・らく', genre: 'ようす・うごき（生活）' },
-      { id: '2_19', char: '活', reading: 'かつ', genre: 'ようす・うごき（生活）' },
-      { id: '2_20', char: '間', reading: 'あいだ', reading2: 'かん', genre: '数・時間・単位' },
-      { id: '2_21', char: '丸', reading: 'まる', reading2: 'がん', genre: 'いろいろな言葉・その他' },
-      { id: '2_22', char: '岩', reading: 'いわ', reading2: 'がん', genre: '自然・生き物・天気' },
-      { id: '2_23', char: '顔', reading: 'かお', reading2: 'がん', genre: '体・ひと・家族' },
-      { id: '2_24', char: '汽', reading: 'き', genre: '社会・国・たてもの' },
-      { id: '2_25', char: '記', reading: 'しる（す）', reading2: 'き', genre: '学校・学習・場所' },
-      { id: '2_26', char: '帰', reading: 'かえ（る）', reading2: 'き', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_27', char: '弓', reading: 'ゆみ', reading2: 'きゅう', genre: 'いろいろな言葉・その他' },
-      { id: '2_28', char: '牛', reading: 'うし', reading2: 'ぎゅう', genre: '自然・生き物・天気' },
-      { id: '2_29', char: '魚', reading: 'さかな', reading2: 'ぎょ', genre: '自然・生き物・天気' },
-      { id: '2_30', char: '京', reading: 'きょう', reading2: 'けい', genre: '社会・国・たてもの' },
-      { id: '2_31', char: '強', reading: 'つよ（い）', reading2: 'きょう', genre: '学校・学習・場所' },
-      { id: '2_32', char: '教', reading: 'おし（える）', reading2: 'きょう', genre: '学校・学習・場所' },
-      { id: '2_33', char: '近', reading: 'ちか（い）', reading2: 'きん', genre: '方角・位置' },
-      { id: '2_34', char: '兄', reading: 'あに', reading2: 'きょう', genre: '体・ひと・家族' },
-      { id: '2_35', char: '形', reading: 'かたち', reading2: 'けい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_36', char: '計', reading: 'はか（る）', reading2: 'けい', genre: '数・時間・単位' },
-      { id: '2_37', char: '元', reading: 'もと', reading2: 'げん', genre: 'いろいろな言葉・その他' },
-      { id: '2_38', char: '言', reading: 'い（う）', reading2: 'げん', genre: 'ようす・うごき（生活）' },
-      { id: '2_39', char: '原', reading: 'はら', reading2: 'げん', genre: '社会・国・たてもの' },
-      { id: '2_40', char: '戸', reading: 'と', reading2: 'こ', genre: '社会・国・たてもの' },
-      { id: '2_41', char: '古', reading: 'ふる（い）', reading2: 'こ', genre: '体・ひと・家族' },
-      { id: '2_42', char: '午', reading: 'うま', reading2: 'ご', genre: '数・時間・単位' },
-      { id: '2_43', char: '工', reading: 'こう', genre: '学校・学習・場所' },
-      { id: '2_44', char: '公', reading: 'おおやけ', reading2: 'こう', genre: '社会・国・たてもの' },
-      { id: '2_45', char: '広', reading: 'ひろ（い）', reading2: 'こう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_46', char: '交', reading: 'まじ（わる）', reading2: 'こう', genre: 'いろいろな言葉・その他' },
-      { id: '2_47', char: '光', reading: 'ひかり', reading2: 'こう', genre: '数・時間・単位' },
-      { id: '2_48', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'ようす・うごき（生活）' },
-      { id: '2_49', char: '行', reading: 'い（く）', reading2: 'こう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_50', char: '高', reading: 'たか（い）', reading2: 'こう', genre: '方角・位置' },
-      { id: '2_51', char: '黄', reading: 'き', reading2: 'おう', genre: 'いろいろな言葉・その他' },
-      { id: '2_52', char: '合', reading: 'あ（う）', reading2: 'ごう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_53', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
-      { id: '2_54', char: '国', reading: 'くに', reading2: 'こく', genre: '社会・国・たてもの' },
-      { id: '2_55', char: '黒', reading: 'くろ', reading2: 'こく', genre: 'いろいろな言葉・その他' },
-      { id: '2_56', char: '今', reading: 'いま', reading2: 'こん', genre: '数・時間・単位' },
-      { id: '2_57', char: '才', reading: 'さい', genre: '体・ひと・家族' },
-      { id: '2_58', char: '細', reading: 'ほそ（い）', reading2: 'さい', genre: '数・時間・単位' },
-      { id: '2_59', char: '作', reading: 'つく（る）', reading2: 'さく', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_60', char: '算', reading: 'さん', genre: '数・時間・単位' },
-      { id: '2_61', char: '止', reading: 'と（まる）', reading2: 'し', genre: 'ようす・うごき（生活）' },
-      { id: '2_62', char: '市', reading: 'いち', reading2: 'し', genre: '社会・国・たてもの' },
-      { id: '2_63', char: '矢', reading: 'や', reading2: 'し', genre: 'いろいろな言葉・その他' },
-      { id: '2_64', char: '姉', reading: 'あね', reading2: 'し', genre: '体・ひと・家族' },
-      { id: '2_65', char: '思', reading: 'お模（う）', reading2: 'し', genre: 'ようす・うごき（生活）' },
-      { id: '2_66', char: '紙', reading: 'かみ', reading2: 'し', genre: '学校・学習・場所' },
-      { id: '2_67', char: '寺', reading: 'てら', reading2: 'じ', genre: '社会・国・たてもの' },
-      { id: '2_68', char: '時', reading: 'とき', reading2: 'じ', genre: '数・時間・単位' },
-      { id: '2_69', char: '室', reading: 'しつ', genre: '学校・学習・場所' },
-      { id: '2_70', char: '社', reading: 'やしろ', reading2: 'しゃ', genre: '社会・国・たてもの' },
-      { id: '2_71', char: '弱', reading: 'よわ（い）', reading2: 'じゃく', genre: '学校・学習・場所' },
-      { id: '2_72', char: '首', reading: 'くび', reading2: 'しゅ', genre: '体・ひと・家族' },
-      { id: '2_73', char: '秋', reading: 'あき', reading2: 'しゅう', genre: 'ようす・うごき（生活）' },
-      { id: '2_74', char: '週', reading: 'しゅう', genre: '数・時間・単位' },
-      { id: '2_75', char: '春', reading: 'はる', reading2: 'しゅん', genre: 'ようす・うごき（生活）' },
-      { id: '2_76', char: '書', reading: 'か（く）', reading2: 'しょ', genre: '学校・学習・場所' },
-      { id: '2_77', char: '少', reading: 'すく（ない）', reading2: 'しょう', genre: '数・時間・単位' },
-      { id: '2_78', char: '場', reading: 'ば', reading2: 'じょう', genre: '社会・国・たてもの' },
-      { id: '2_79', char: '色', reading: 'いろ', reading2: 'しき', genre: 'いろいろな言葉・その他' },
-      { id: '2_80', char: '食', reading: 'た（べる）', reading2: 'しょく', genre: 'ようす・うごき（生活）' },
-      { id: '2_81', char: '心', reading: 'こころ', reading2: 'しん', genre: '体・ひと・家族' },
-      { id: '2_82', char: '新', reading: 'あたら（しい）', reading2: 'しん', genre: '体・ひと・家族' },
-      { id: '2_83', char: '親', reading: 'おや', reading2: 'しん', genre: '体・ひと・家族' },
-      { id: '2_84', char: '図', reading: 'ず・と', reading2: 'ず', genre: '学校・学習・場所' },
-      { id: '2_85', char: '数', reading: 'かず', reading2: 'すう', genre: '学校・学習・場所' },
-      { id: '2_86', char: '西', reading: 'にし', reading2: 'せい', genre: '方角・位置' },
-      { id: '2_87', char: '声', reading: 'こえ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
-      { id: '2_88', char: '星', reading: 'ほし', reading2: 'せい', genre: '自然・生き物・天気' },
-      { id: '2_89', char: '晴', reading: 'はれ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
-      { id: '2_90', char: '切', reading: 'き（る）', reading2: 'せつ', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_91', char: '雪', reading: 'ゆき', reading2: 'せつ', genre: '自然・生き物・天気' },
-      { id: '2_92', char: '船', reading: 'ふね', reading2: 'せん', genre: '社会・国・たてもの' },
-      { id: '2_93', char: '線', reading: 'せん', genre: '学校・学習・場所' },
-      { id: '2_94', char: '前', reading: 'まえ', reading2: 'ぜん', genre: '方角・位置' },
-      { id: '2_95', char: '組', reading: 'くみ', reading2: 'そ', genre: '学校・学習・場所' },
-      { id: '2_96', char: '走', reading: 'はし（る）', reading2: 'そう', genre: 'ようす・うごき（生活）' },
-      { id: '2_97', char: '送', reading: 'おく（る）', reading2: 'そう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_98', char: '足', reading: 'あし', reading2: 'そく', genre: '体・ひと・家族' },
-      { id: '2_100', char: '多', reading: 'おお（い）', reading2: 'た', genre: '数・時間・単位' },
-      { id: '2_101', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: '数・時間・単位' },
-      { id: '2_102', char: '体', reading: 'からだ', reading2: 'たい', genre: '体・ひと・家族' },
-      { id: '2_103', char: '台', reading: 'だい', genre: '社会・国・たてもの' },
-      { id: '2_104', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
-      { id: '2_105', char: '知', reading: 'し（る）', reading2: 'ち', genre: 'ようす・うごき（生活）' },
-      { id: '2_106', char: '地', reading: 'ち・じ', reading2: 'ち', genre: '自然・生き物・天気' },
-      { id: '2_107', char: '池', reading: 'いけ', reading2: 'ち', genre: '自然・生き物・天気' },
-      { id: '2_108', char: '茶', reading: 'ちゃ', reading2: 'さ', genre: 'いろいろな言葉・その他' },
-      { id: '2_109', char: '昼', reading: 'ひる', reading2: 'ちゅう', genre: 'ようす・うごき（生活）' },
-      { id: '2_110', char: '長', reading: 'なが（い）', reading2: 'ちょう', genre: '方角・位置' },
-      { id: '2_111', char: '鳥', reading: 'とり', reading2: 'ちょう', genre: '自然・生き物・天気' },
-      { id: '2_112', char: '朝', reading: 'あさ', reading2: 'ちょう', genre: 'ようす・うごき（生活）' },
-      { id: '2_113', char: '町', reading: 'まち', reading2: 'ちょう', genre: '社会・国・たてもの' },
-      { id: '2_114', char: '直', reading: 'なお（す）', reading2: 'ちょく', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_115', char: '通', reading: 'とお（る）', reading2: 'つう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_116', char: '弟', reading: 'おとうと', reading2: 'だい', genre: '体・ひと・家族' },
-      { id: '2_117', char: '店', reading: 'みせ', reading2: 'てん', genre: '社会・国・たてもの' },
-      { id: '2_118', char: '点', reading: 'てん', genre: '学校・学習・場所' },
-      { id: '2_119', char: '電', reading: 'でん', genre: '自然・生き物・天気' },
-      { id: '2_120', char: '刀', reading: 'かたな', reading2: 'とう', genre: 'いろいろな言葉・その他' },
-      { id: '2_121', char: '冬', reading: 'ふゆ', reading2: 'とう', genre: 'ようす・うごき（生活）' },
-      { id: '2_122', char: '当', reading: 'あ（たる）', reading2: 'とう', genre: 'いろいろな言葉・その他' },
-      { id: '2_123', char: '東', reading: 'ひがし', reading2: 'とう', genre: '方角・位置' },
-      { id: '2_124', char: '答', reading: 'こた（える）', reading2: 'とう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_125', char: '頭', reading: 'あたま', reading2: 'とう', genre: '体・ひと・家族' },
-      { id: '2_126', char: '同', reading: 'おな（じ）', reading2: 'どう', genre: '体・ひと・家族' },
-      { id: '2_127', char: '道', reading: 'みち', reading2: 'どう', genre: '社会・国・たてもの' },
-      { id: '2_128', char: '読', reading: 'よ（む）', reading2: 'どく', genre: '学校・学習・場所' },
-      { id: '2_129', char: '内', reading: 'うち', reading2: 'ない', genre: '方角・位置' },
-      { id: '2_130', char: '肉', reading: 'にく', genre: '自然・生き物・天気' },
-      { id: '2_131', char: '南', reading: 'みなみ', reading2: 'なん', genre: '方角・位置' },
-      { id: '2_132', char: '二', reading: 'に', genre: '数・時間・単位' },
-      { id: '2_133', char: '日', reading: 'ひ', reading2: 'にち', genre: '数・時間・単位' },
-      { id: '2_134', char: '入', reading: 'はい（る）', reading2: 'にゅう', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_135', char: '馬', reading: 'うま', reading2: 'ば', genre: '自然・生き物・天気' },
-      { id: '2_136', char: '売', reading: 'う（る）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_137', char: '買', reading: 'か（う）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_138', char: '麦', reading: 'むぎ', reading2: 'ばく', genre: '自然・生き物・天気' },
-      { id: '2_139', char: '半', reading: 'はん', genre: '数・時間・単位' },
-      { id: '2_140', char: '番', reading: 'ばん', genre: '数・時間・単位' },
-      { id: '2_141', char: '父', reading: 'ちち', reading2: 'ふ', genre: '体・ひと・家族' },
-      { id: '2_142', char: '風', reading: 'かぜ', reading2: 'ふう', genre: '自然・生き物・天気' },
-      { id: '2_143', char: '分', reading: 'わ（かる）', reading2: 'ふん', genre: '数・時間・単位' },
-      { id: '2_144', char: '聞', reading: 'き（く）', reading2: 'ぶん', genre: 'ようす・うごき（生活）' },
-      { id: '2_145', char: '米', reading: 'こめ', reading2: 'べい', genre: 'いろいろな言葉・その他' },
-      { id: '2_146', char: '歩', reading: 'ある（く）', reading2: 'ほ', genre: 'ようす・うごき（生活）' },
-      { id: '2_147', char: '母', reading: 'はは', reading2: 'ぼ', genre: '体・ひと・家族' },
-      { id: '2_148', char: '方', reading: 'かた', reading2: 'ほう', genre: 'いろいろな言葉・その他' },
-      { id: '2_149', char: '北', reading: 'きた', reading2: 'ほく', genre: '方角・位置' },
-      { id: '2_150', char: '毎', reading: 'まい', genre: '数・時間・単位' },
-      { id: '2_151', char: '妹', reading: 'いもうと', reading2: 'まい', genre: '体・ひと・家族' },
-      { id: '2_152', char: '万', reading: 'まん', genre: '数・時間・単位' },
-      { id: '2_153', char: '明', reading: 'あか（るい）', reading2: 'めい', genre: 'ようす・うごき（生活）' },
-      { id: '2_154', char: '鳴', reading: 'な（く）', reading2: 'めい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_155', char: '毛', reading: 'け', reading2: 'もう', genre: '自然・生き物・天気' },
-      { id: '2_156', char: '門', reading: 'もん', genre: '社会・国・たてもの' },
-      { id: '2_157', char: '夜', reading: 'よる', reading2: 'や', genre: 'ようす・うごき（生活）' },
-      { id: '2_158', char: '野', reading: 'の', reading2: 'や', genre: '社会・国・たてもの' },
-      { id: '2_159', char: '友', reading: 'とも', reading2: 'ゆう', genre: '体・ひと・家族' },
-      { id: '2_160', char: '用', reading: 'もち（いる）', reading2: 'よう', genre: '学校・学習・場所' },
-      { id: '2_161', char: '曜', reading: 'よう', genre: '数・時間・単位' },
-      { id: '2_162', char: '来', reading: 'く（る）', reading2: 'らい', genre: 'ようす・うごき（行動・変化）' },
-      { id: '2_163', char: '里', reading: 'さと', reading2: 'り', genre: '社会・国・たてもの' },
-      { id: '2_164', char: '理', reading: 'り', genre: '学校・学習・場所' },
-      { id: '2_165', char: '話', reading: 'はな（す）', reading2: 'わ', genre: '学校・学習・場所' }
-    ];
-
-    // ジャンル一覧
-    const GENRES = [
-      '数・時間・単位', '方角・位置', '自然・生き物・天気', 
-      '学校・学習・場所', '体・ひと・家族', 'ようす・うごき（生活）', 
-      'ようす・うごき（行動・変化）', '社会・国・たてもの', 'いろいろな言葉・その他'
-    ];
-    
-    const MODES = ['trace','trace','fade-on-touch','fade-on-touch','blank','blank'];
-    const MAX_HISTORY_COUNT = 50;
-    
-    let selectedIds = [];
-    let currentIndex = 0;
-    let cellStates = new Array(6).fill(false);
-    let currentTool = 'pen';
-    let tapCount = 0;
-    let tapTimer = null;
-    let isSpeakLocked = false;
-    let strokeHistories = [[], [], [], [], [], []];
-    let globalPenWidth = 6;
-
-    let savedHistories = [];
-    try {
-      const localData = localStorage.getItem('kanji2_practice_history');
-      if (localData) {
-        savedHistories = JSON.parse(localData);
-      }
-    } catch(e) {
-      console.error('履歴の読み込みに失敗しました:', e);
-    }
-
-    function saveToLocalStorage() {
-      try {
-        localStorage.setItem('kanji2_practice_history', JSON.stringify(savedHistories));
-      } catch(e) {
-        console.error('保存できませんでした:', e);
-      }
-    }
-
-    function openSettingsModal() {
-      document.getElementById('pen-width-slider').value = globalPenWidth;
-      updatePenWidthPreview(globalPenWidth);
-      document.getElementById('settings-overlay').style.display = 'flex';
-    }
-
-    function closeSettingsModal() {
-      document.getElementById('settings-overlay').style.display = 'none';
-    }
-
-    function updatePenWidthPreview(val) {
-      globalPenWidth = parseInt(val, 10);
-      const circle = document.getElementById('pen-preview-circle');
-      circle.style.width = `${globalPenWidth}px`;
-      circle.style.height = `${globalPenWidth}px`;
-    }
-
-    function handleTripleTap(buttonElement, callback) {
-      tapCount++;
-      if(tapCount === 1) buttonElement.style.backgroundColor = '#a7f3d0';
-      if(tapCount === 2) buttonElement.style.backgroundColor = '#d1fae5';
-      clearTimeout(tapTimer);
-      if (tapCount === 3) {
-        tapCount = 0;
-        buttonElement.style.backgroundColor = '';
-        callback();
-      } else {
-        tapTimer = setTimeout(() => {
-          tapCount = 0;
-          buttonElement.style.backgroundColor = '';
-        }, 400);
-      }
-    }
-
-    function setTool(tool) {
-      currentTool = tool;
-      document.getElementById('tool-pen').classList.toggle('active', tool === 'pen');
-      document.getElementById('tool-eraser').classList.toggle('active', tool === 'eraser');
-    }
-
-    function changeScreen(phase) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      if(phase === 'HOME') document.getElementById('screen-home').classList.add('active');
-      if(phase === 'KANJI_LIST') {
-        document.getElementById('screen-list').classList.add('active');
-        renderKanjiList();
-      }
-      if(phase === 'PRACTICE') document.getElementById('screen-practice').classList.add('active');
-      if(phase === 'HISTORY_GALLERY') document.getElementById('screen-history-gallery').classList.add('active');
-    }
-
-    function goToTransit() {
-      if ('speechSynthesis' in window) window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-      changeScreen('KANJI_LIST');
-    }
-
-    function renderKanjiList() {
-      const box = document.getElementById('kanji-selector-box');
-      box.innerHTML = '';
-      
-      GENRES.forEach(genre => {
-        const genreKanji = ALL_160_KANJI.filter(k => k.genre === genre);
-        if (genreKanji.length === 0) return;
-        
-        const section = document.createElement('div');
-        section.className = 'genre-section';
-        
-        const title = document.createElement('h3');
-        title.className = 'genre-title';
-        title.innerText = `${genre} (${genreKanji.length}文字)`;
-        section.appendChild(title);
-        
-        const grid = document.createElement('div');
-        grid.className = 'grid-kanji';
-        
-        genreKanji.forEach(k => {
-          const btn = document.createElement('button');
-          btn.className = 'btn-kanji' + (selectedIds.includes(k.id) ? ' selected' : '');
-          btn.innerText = k.char;
-          btn.onclick = () => {
-            if(selectedIds.includes(k.id)) selectedIds = selectedIds.filter(id => id !== k.id);
-            else selectedIds.push(k.id);
-            renderKanjiList();
-            updateStartButtonState();
-          };
-          grid.appendChild(btn);
-        });
-        
-        section.appendChild(grid);
-        box.appendChild(section);
-      });
-    }
-
-    function selectAllKanji() {
-      selectedIds = ALL_160_KANJI.map(k => k.id);
-      renderKanjiList();
-      updateStartButtonState();
-    }
-
-    function clearAllKanji() {
-      selectedIds = [];
-      renderKanjiList();
-      updateStartButtonState();
-    }
-
-    function updateStartButtonState() {
-      const startBtn = document.getElementById('btn-start-practice');
-      if(selectedIds.length > 0) {
-        startBtn.disabled = false;
-        startBtn.style.backgroundColor = '#059669';
-        startBtn.style.color = 'white';
-        startBtn.style.cursor = 'pointer';
-        startBtn.innerText = `れんしゅうを はじめる (${selectedIds.length}文字)`;
-      } else {
-        startBtn.disabled = true;
-        startBtn.style.backgroundColor = '#cbd5e1';
-        startBtn.style.color = '#64748b';
-        startBtn.style.cursor = 'not-allowed';
-        startBtn.innerText = 'れんしゅうを はじめる (0文字)';
-      }
-    }
-
-    function startPractice() {
-      currentIndex = 0;
-      setTool('pen');
-      initPracticePage();
-      changeScreen('PRACTICE');
-    }
-
-    function speak(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const cleanText = text.replace(/[\(\)（）]/g, "");
-        const u = new SpeechSynthesisUtterance(cleanText);
-        u.lang = 'ja-JP'; u.rate = 0.8;
-        window.speechSynthesis.speak(u);
-      }
-    }
-
-    function triggerMasterSpeak() {
-      if (isSpeakLocked) return;
-      const currentKanji = ALL_160_KANJI.find(k => k.id === selectedIds[currentIndex]);
-      if (!currentKanji) return;
-
-      let speakText = currentKanji.reading;
-      if (currentKanji.reading2) {
-        speakText += `、${currentKanji.reading2}`;
-      }
-      speak(speakText);
-
-      isSpeakLocked = true;
-      const speakBtn = document.getElementById('btn-master-speak');
-      if (speakBtn) speakBtn.disabled = true;
-
-      setTimeout(() => {
-        isSpeakLocked = false;
-        if (speakBtn) speakBtn.disabled = false;
-      }, 2000);
-    }
-
-    function initPracticePage() {
-      cellStates = new Array(6).fill(false);
-      strokeHistories = [[], [], [], [], [], []];
-      document.getElementById('btn-next').style.display = 'none';
-      document.getElementById('text-guide').style.display = 'block';
-
-      const currentKanji = ALL_160_KANJI.find(k => k.id === selectedIds[currentIndex]);
-      document.getElementById('practice-model').innerText = currentKanji.char;
-      document.getElementById('practice-reading').innerText = currentKanji.reading;
-      
-      const reading2Element = document.getElementById('practice-reading2');
-      if (currentKanji.reading2) {
-        reading2Element.innerText = currentKanji.reading2;
-        reading2Element.style.display = 'block';
-      } else {
-        reading2Element.innerText = '';
-        reading2Element.style.display = 'none';
-      }
-
-      document.getElementById('practice-progress').innerText = `進捗: ${currentIndex + 1} / ${selectedIds.length}`;
-      
-      let startSpeakText = currentKanji.reading;
-      if (currentKanji.reading2) startSpeakText += `、${currentKanji.reading2}`;
-      speak(startSpeakText);
-
-      const container = document.getElementById('cells-container');
-      container.innerHTML = '';
-      
-      MODES.forEach((mode, idx) => {
-        const cell = document.createElement('div');
-        cell.className = 'cell-container';
-        cell.innerHTML = `
-          <span class="cell-num">${idx + 1}</span>
-          <div class="canvas-area">
-            <div class="canvas-bg" id="bg-${idx}" style="display: ${mode === 'blank' ? 'none' : 'flex'}">${currentKanji.char}</div>
-            <div class="guide-h"></div><div class="guide-v"></div>
-            <canvas id="canvas-${idx}"></canvas>
-          </div>
-        `;
-        container.appendChild(cell);
-        setupCanvas(idx, mode);
-      });
-    }
-
-    function setupCanvas(idx, mode) {
-      const canvas = document.getElementById(`canvas-${idx}`);
-      canvas.width = 160; canvas.height = 160;
-      const ctx = canvas.getContext('2d');
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-
-      let drawing = false;
-      let currentStroke = [];
-
-      function start(e) {
-        e.preventDefault();
-        if(currentTool === 'pen' && mode === 'fade-on-touch') {
-          document.getElementById(`bg-${idx}`).style.opacity = '0';
-        }
-        drawing = true;
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const pos = { x: clientX - rect.left, y: clientY - rect.top };
-        
-        ctx.beginPath(); 
-        ctx.moveTo(pos.x, pos.y);
-
-        let lineWidth = globalPenWidth; 
-        let isEraser = false;
-        if (currentTool === 'eraser') {
-          ctx.globalCompositeOperation = 'destination-out';
-          lineWidth = 20; 
-          isEraser = true;
-        } else {
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.strokeStyle = '#333333';
-        }
-        ctx.lineWidth = lineWidth;
-
-        currentStroke = {
-          isEraser: isEraser,
-          lineWidth: lineWidth,
-          points: [pos]
+    <script>
+        // 漢字のデータ（ジャンルは維持、中身を関連度順・セットになるよう並び替え）
+        const kanjiCategories = {
+          "数と言葉・時・方角": [
+            // 数・単位・順序
+            "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "百", "千", "万", "半", "数", "番", "度", "回",
+            // 時・季節・カレンダー（ご要望のセット）
+            "春", "夏", "秋", "冬", "朝", "昼", "夜", "時", "分", "週", "曜", "月", "日", "年", "今", "前", "後", "間",
+            // 方角・位置
+            "東", "西", "南", "北", "方", "上", "下", "左", "右", "遠", "近", "内", "外", "高", "長", "太", "細", "直", "丸", "角"
+          ],
+          "人と体・生活・家": [
+            // 家族・人・呼び名
+            "父", "母", "兄", "弟", "姉", "妹", "親", "子", "男", "女", "人", "名", "古", "少", "多",
+            // 体の部位・状態
+            "目", "耳", "口", "手", "足", "頭", "心", "顔", "体", "才", "毛", "活", "生",
+            // 家・建物・生活の道具
+            "家", "室", "戸", "門", "場", "園", "店", "売", "買", "食", "飲", "紙", "画", "図", "工", "刀", "弓", "矢", "衣"
+          ],
+          "自然・生き物・地名・天候": [
+            // 天体・天候
+            "天", "気", "晴", "風", "雲", "雪", "電", "光", "星", "明", "暗",
+            // 自然の地形・エレメント
+            "山", "川", "海", "岩", "石", "谷", "池", "地", "場", "野", "原", "里", "道", "国", "社",
+            // 植物・農作物
+            "木", "林", "森", "竹", "草", "花", "米", "麦",
+            // 生き物
+            "鳥", "魚", "虫", "馬", "牛", "羊", "肉", "羽", "毛"
+          ],
+          "いろいろな言葉・その他": [
+            // 色（ご要望のセット）
+            "色", "黄", "黒", "茶", "白", "赤", "青",
+            // 動作・行動
+            "行", "来", "出", "入", "走", "歩", "止", "立", "坐", "思", "考", "言", "話", "語", "書", "読", "聞", "見",
+            // 学校・学習
+            "学", "校", "教", "室", "文", "字", "本", "作", "用", "強", "弱",
+            // 状態・その他
+            "新", "古", "長", "短", "高", "低", "多", "少", "大", "小", "何", "元", "交", "当"
+          ]
         };
-      }
 
-      function move(e) {
-        if(!drawing) return;
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const pos = { x: clientX - rect.left, y: clientY - rect.top };
-        
-        ctx.lineTo(pos.x, pos.y); 
-        ctx.stroke();
-        currentStroke.points.push(pos);
-      }
+        // 漢字の読み方辞書データ
+        const kanjiDict = {
+            "一": "いち", "二": "に", "三": "さん", "四": "よん", "五": "ご", "六": "ろく", "七": "なな", "八": "はち", "九": "きゅう", "十": "じゅう",
+            "百": "ひゃく", "千": "せん", "万": "まん", "半": "はん", "数": "すう", "番": "ばん", "度": "ど", "回": "かい",
+            "春": "はる", "夏": "なつ", "秋": "あき", "冬": "ふゆ", "朝": "あさ", "昼": "ひる", "夜": "よる", "時": "とき", "分": "ふん",
+            "週": "しゅう", "曜": "よう", "月": "つき", "日": "ひ", "年": "とし", "今": "いま", "前": "まえ", "後": "うしろ", "間": "あいだ",
+            "東": "ひがし", "西": "にし", "南": "みなみ", "北": "きた", "方": "ほう", "上": "うえ", "下": "した", "左": "ひだり", "右": "みぎ",
+            "遠": "とおい", "近": "ちかい", "内": "うち", "外": "そと", "高": "たかい", "長": "ながい", "太": "ふとい", "細": "ほそい", "直": "ちょく", "丸": "まる", "角": "かく",
+            "父": "ちち", "母": "はは", "兄": "あに", "弟": "おとうと", "姉": "あね", "妹": "いもうと", "親": "おや", "子": "こ", "男": "おとこ", "女": "おんな",
+            "人": "ひと", "名": "な", "古": "ふるい", "少": "すこし", "多": "おおい", "目": "め", "耳": "みみ", "口": "くち", "手": "て", "足": "あし",
+            "頭": "あたま", "心": "こころ", "顔": "かお", "体": "からだ", "才": "さい", "毛": "け", "活": "かつ", "生": "いきる",
+            "家": "いえ", "室": "しつ", "戸": "と", "門": "もん", "場": "ばしょ", "園": "えん", "店": "みせ", "売": "うる", "買": "かう",
+            "食": "たべる", "飲": "のむ", "紙": "かみ", "画": "が", "図": "ず", "工": "こう", "刀": "かたな", "弓": "ゆみ", "矢": "や", "衣": "ころも",
+            "天": "てん", "気": "き", "晴": "はれ", "風": "かぜ", "雲": "くも", "雪": "ゆき", "電": "でん", "光": "ひかり", "星": "ほし", "明": "あかるい", "暗": "くらい",
+            "山": "やま", "川": "かわ", "海": "うみ", "岩": "いわ", "石": "いし", "谷": "たに", "池": "いけ", "地": "ち", "野": "の", "原": "はら",
+            "里": "さと", "道": "みち", "国": "くに", "社": "しゃ", "木": "き", "林": "はやし", "森": "もり", "竹": "たけ", "草": "くさ", "花": "花",
+            "米": "こめ", "麦": "むぎ", "鳥": "とり", "魚": "さかな", "虫": "むし", "馬": "うま", "牛": "うし", "羊": "ひつじ", "肉": "にく", "羽": "はね",
+            "色": "いろ", "黄": "きいろ", "黒": "くろ", "茶": "ちゃ", "白": "しろ", "赤": "あか", "青": "あお",
+            "行": "いく", "来": "くる", "出": "でる", "入": "はいる", "走": "はしる", "歩": "あるく", "止": "とまる", "立": "たつ", "坐": "すわる",
+            "思": "おもう", "考": "かんがえる", "言": "いう", "話": "はなす", "語": "ご", "書": "かく", "読": "よむ", "聞": "きく", "見": "みる",
+            "学": "まなぶ", "校": "こう", "教": "おしえる", "文": "ぶん", "字": "じ", "本": "ほん", "作": "つくる", "用": "よう", "強": "つよい", "弱": "よわい",
+            "新": "あたらしい", "短": "みじかい", "低": "ひくい", "大": "おおきい", "小": "ちいさい", "何": "なに", "元": "げん", "交": "こう", "当": "あたる"
+        };
 
-      function end() {
-        if(!drawing) return;
-        drawing = false; 
-        ctx.closePath();
-        
-        if(mode === 'fade-on-touch') {
-          document.getElementById(`bg-${idx}`).style.opacity = '1';
+        let selectedKanji = new Set();
+        let quizList = [];
+        let currentIdx = 0;
+        let score = 0;
+
+        // メニュー画面の生成
+        function createMenu() {
+            const container = document.getElementById('category-container');
+            container.innerHTML = '';
+
+            for (const [category, kanjis] of Object.entries(kanjiCategories)) {
+                const section = document.createElement('div');
+                section.className = 'category-section';
+
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.innerText = category;
+                section.appendChild(title);
+
+                const grid = document.createElement('div');
+                grid.className = 'kanji-grid';
+
+                kanjis.forEach(kanji => {
+                    if (!kanjiDict[kanji]) return; // 読み定義がないものはスキップ
+                    const btn = document.createElement('button');
+                    btn.className = 'kanji-btn';
+                    btn.innerText = kanji;
+                    btn.dataset.kanji = kanji;
+                    
+                    if (selectedKanji.has(kanji)) {
+                        btn.classList.add('selected');
+                    }
+
+                    btn.onclick = () => toggleKanji(btn, kanji);
+                    grid.appendChild(btn);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            }
         }
 
-        if(currentStroke.points.length > 0) {
-          strokeHistories[idx].push(currentStroke);
+        function toggleKanji(btn, kanji) {
+            if (selectedKanji.has(kanji)) {
+                selectedKanji.delete(kanji);
+                btn.classList.remove('selected');
+            } else {
+                selectedKanji.add(kanji);
+                btn.classList.add('selected');
+            }
         }
-        checkWritten(idx);
-      }
 
-      canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move);
-      canvas.addEventListener('mouseup', end); canvas.addEventListener('mouseleave', end);
-      canvas.addEventListener('touchstart', start, {passive: false}); canvas.addEventListener('touchmove', move, {passive: false});
-      canvas.addEventListener('touchend', end);
-    }
-
-    function redrawCanvas(idx) {
-      const canvas = document.getElementById(`canvas-${idx}`);
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, 160, 160);
-
-      strokeHistories[idx].forEach(stroke => {
-        if (stroke.points.length === 0) return;
-        ctx.beginPath();
-        if (stroke.isEraser) {
-          ctx.globalCompositeOperation = 'destination-out';
-        } else {
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.strokeStyle = '#333333';
+        function selectAllKanji(select) {
+            const buttons = document.querySelectorAll('.kanji-btn');
+            buttons.forEach(btn => {
+                const kanji = btn.dataset.kanji;
+                if (select) {
+                    selectedKanji.add(kanji);
+                    btn.classList.add('selected');
+                } else {
+                    selectedKanji.delete(kanji);
+                    btn.classList.remove('selected');
+                }
+            });
         }
-        ctx.lineWidth = stroke.lineWidth;
-        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-        for (let i = 1; i < stroke.points.length; i++) {
-          ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+
+        // クイズ開始
+        function startQuiz() {
+            if (selectedKanji.size === 0) {
+                alert('漢字を1つ以上えらんでね！');
+                return;
+            }
+
+            quizList = Array.from(selectedKanji);
+            // ランダムにシャッフル
+            quizList.sort(() => Math.random() - 0.5);
+            
+            currentIdx = 0;
+            score = 0;
+
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('total-questions').innerText = quizList.length;
+
+            showQuestion();
         }
-        ctx.stroke();
-        ctx.closePath();
-      });
-    }
 
-    function checkWritten(idx) {
-      const canvas = document.getElementById(`canvas-${idx}`);
-      const ctx = canvas.getContext('2d');
-      const imgData = ctx.getImageData(0, 0, 160, 160).data;
-      let count = 0;
-      for (let i = 3; i < imgData.length; i += 4) { if (imgData[i] > 0) count++; }
-      cellStates[idx] = count > 50;
-      updateFooter();
-    }
+        // 問題の表示
+        function showQuestion() {
+            document.getElementById('current-question').innerText = currentIdx + 1;
+            const currentKanji = quizList[currentIdx];
+            document.getElementById('kanji-display').innerText = currentKanji;
 
-    function updateFooter() {
-      const allDone = cellStates.every(s => s === true);
-      const nextBtn = document.getElementById('btn-next');
-      const guideText = document.getElementById('text-guide');
-      
-      if(allDone) {
-        nextBtn.innerText = currentIndex === selectedIds.length - 1 ? 'できた！！おわる 🎉' : 'つぎの かんじへ ➡️';
-        nextBtn.style.display = 'block';
-        guideText.style.display = 'none';
-      } else {
-        nextBtn.style.display = 'none';
-        guideText.style.display = 'block';
-      }
-    }
+            const correctAnswer = kanjiDict[currentKanji];
+            
+            // 誤答の選択肢を全漢字から集める
+            let allReadings = Object.values(kanjiDict).filter(r => r !== correctAnswer);
+            // 重複を削除してシャッフル
+            allReadings = Array.from(new Set(allReadings)).sort(() => Math.random() - 0.5);
 
-    function captureAndNextKanji() {
-      const currentKanji = ALL_160_KANJI.find(k => k.id === selectedIds[currentIndex]);
-      const virtualCanvas = document.createElement('canvas');
-      virtualCanvas.width = 600;
-      virtualCanvas.height = 450;
-      const vCtx = virtualCanvas.getContext('2d');
+            // 4つの選択肢を作る
+            const choices = [correctAnswer, allReadings[0], allReadings[1], allReadings[2]];
+            // 選択肢をシャッフル
+            choices.sort(() => Math.random() - 0.5);
 
-      vCtx.fillStyle = '#ffffff';
-      vCtx.fillRect(0, 0, 600, 450);
-
-      vCtx.fillStyle = '#047857';
-      vCtx.font = 'bold 28px "Klee One", sans-serif';
-      vCtx.fillText(`「${currentKanji.char}」の れんしゅう`, 30, 45);
-
-      vCtx.fillStyle = '#64748b';
-      vCtx.font = '16px "Klee One", sans-serif';
-      let historyReadingText = `よみかた: ${currentKanji.reading}`;
-      if(currentKanji.reading2) historyReadingText += `, ${currentKanji.reading2}`;
-      vCtx.fillText(historyReadingText, 320, 42);
-
-      vCtx.strokeStyle = '#e2e8f0';
-      vCtx.lineWidth = 2;
-      vCtx.beginPath(); vCtx.moveTo(20, 65); vCtx.lineTo(580, 65); vCtx.stroke();
-
-      for (let i = 0; i < 6; i++) {
-        const originalCanvas = document.getElementById(`canvas-${i}`);
-        if (originalCanvas) {
-          const col = i % 3;
-          const row = Math.floor(i / 3);
-          const x = 30 + col * 190;
-          const y = 90 + row * 170;
-
-          vCtx.strokeStyle = '#cbd5e1';
-          vCtx.lineWidth = 1;
-          vCtx.strokeRect(x, y, 160, 160);
-
-          vCtx.fillStyle = '#94a3b8';
-          vCtx.font = 'bold 14px "Klee One", sans-serif';
-          vCtx.fillText(i + 1, x + 8, y + 18);
-
-          if (MODES[i] !== 'blank') {
-            vCtx.fillStyle = '#e2e8f0';
-            vCtx.font = '110px "Klee One", serif';
-            vCtx.setTransform = 'center';
-            vCtx.textAlign = 'center';
-            vCtx.textBaseline = 'middle';
-            vCtx.fillText(currentKanji.char, x + 80, y + 80);
-            vCtx.textAlign = 'left'; vCtx.textBaseline = 'alphabetic';
-          }
-
-          vCtx.strokeStyle = '#f1f5f9';
-          vCtx.setLineDash([4, 4]);
-          vCtx.beginPath(); vCtx.moveTo(x + 80, y); vCtx.lineTo(x + 80, y + 160); vCtx.stroke();
-          vCtx.beginPath(); vCtx.moveTo(x, y + 80); vCtx.lineTo(x + 160, y + 80); vCtx.stroke();
-          vCtx.setLineDash([]);
-
-          vCtx.drawImage(originalCanvas, x, y);
+            const choiceButtons = document.querySelectorAll('.choice-btn');
+            choiceButtons.forEach((btn, index) => {
+                btn.innerText = choices[index];
+                btn.dataset.answer = choices[index];
+                btn.style.background = '#f8f9fa';
+                btn.style.borderColor = '#e9ecef';
+                btn.disabled = false;
+            });
         }
-      }
 
-      const imgDataUrl = virtualCanvas.toDataURL('image/png');
-      const now = new Date();
-      
-      const dateString = `${now.getMonth() + 1}月${now.getDate()}日`;
-      const timeString = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+        // 答え合わせ
+        function checkAnswer(selectedIndex) {
+            const choiceButtons = document.querySelectorAll('.choice-btn');
+            const selectedBtn = choiceButtons[selectedIndex];
+            const currentKanji = quizList[currentIdx];
+            const correctAnswer = kanjiDict[currentKanji];
 
-      savedHistories.unshift({
-        char: currentKanji.char,
-        reading: currentKanji.reading,
-        imageSrc: imgDataUrl,
-        dateLabel: dateString,
-        timeLabel: timeString
-      });
+            // 連続クリック防止
+            choiceButtons.forEach(btn => btn.disabled = true);
 
-      if (savedHistories.length > MAX_HISTORY_COUNT) {
-        savedHistories = savedHistories.slice(0, MAX_HISTORY_COUNT);
-      }
+            if (selectedBtn.dataset.answer === correctAnswer) {
+                selectedBtn.style.background = '#d4edda';
+                selectedBtn.style.borderColor = '#28a745';
+                score++;
+            } else {
+                selectedBtn.style.background = '#f8d7da';
+                selectedBtn.style.borderColor = '#dc3545';
+                // 正解のボタンを緑色にする
+                choiceButtons.forEach(btn => {
+                    if (btn.dataset.answer === correctAnswer) {
+                        btn.style.background = '#d4edda';
+                        btn.style.borderColor = '#28a745';
+                    }
+                });
+            }
 
-      saveToLocalStorage();
-      nextKanji();
-    }
-
-    function nextKanji() {
-      if (currentIndex < selectedIds.length - 1) {
-        currentIndex++;
-        initPracticePage();
-      } else {
-        alert('ぜんぶクリア！よくがんばったね！💮');
-        exitAndResetKanji();
-        changeScreen('KANJI_LIST');
-      }
-    }
-
-    function exitAndResetKanji() {
-      selectedIds = [];
-      updateStartButtonState();
-    }
-
-    function openHistoryGallery() {
-      changeScreen('HISTORY_GALLERY');
-      const grid = document.getElementById('gallery-items-grid');
-      grid.innerHTML = '';
-
-      if (savedHistories.length === 0) {
-        grid.innerHTML = `<div class="gallery-empty">まだ練習の履歴がありません。<br>練習が終わるとここに自動で保存されるよ！✨</div>`;
-        return;
-      }
-
-      savedHistories.forEach((item, index) => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'gallery-item';
-        itemDiv.onclick = () => openOverlay(item);
-        itemDiv.innerHTML = `
-          <img src="${item.imageSrc}" alt="${item.char}">
-          <div class="gallery-item-label">${item.char}<br><span style="font-size:10px;color:#64748b;">${item.dateLabel} ${item.timeLabel}</span></div>
-        `;
-        grid.appendChild(itemDiv);
-      });
-    }
-
-    function clearHistoryGallery() {
-      if (confirm('これまで練習したりれきをぜんぶ消してもいいですか？')) {
-        savedHistories = [];
-        saveToLocalStorage();
-        openHistoryGallery();
-      }
-    }
-
-    function openOverlay(item) {
-      document.getElementById('overlay-img').src = item.imageSrc;
-      document.getElementById('overlay-label').innerText = `「${item.char}」の練習結果（${item.dateLabel} ${item.timeLabel}）`;
-      document.getElementById('gallery-overlay').style.display = 'flex';
-    }
-
-    function closeOverlay() {
-      document.getElementById('gallery-overlay').style.display = 'none';
-    }
-
-    let longTapTimer = null;
-    const bgPanel = document.getElementById('practice-bg-panel');
-
-    function startLongTapCheck(e) {
-      if (e.target.tagName === 'CANVAS' || e.target.tagName === 'BUTTON' || e.target.closest('button')) {
-        return;
-      }
-      clearTimeout(longTapTimer);
-      longTapTimer = setTimeout(() => {
-        undoLastStrokeGlobal();
-      }, 1000);
-    }
-
-    function cancelLongTapCheck() {
-      clearTimeout(longTapTimer);
-    }
-
-    function undoLastStrokeGlobal() {
-      let targetCellIdx = -1;
-      for (let i = 0; i < 6; i++) {
-        if (strokeHistories[i].length > 0) {
-          targetCellIdx = i;
+            setTimeout(() => {
+                currentIdx++;
+                if (currentIdx < quizList.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1000);
         }
-      }
-      if (targetCellIdx !== -1) {
-        strokeHistories[targetCellIdx].pop();
-        redrawCanvas(targetCellIdx);
-        checkWritten(targetCellIdx);
-        if (navigator.vibrate) navigator.vibrate(50);
-      }
-    }
 
-    bgPanel.addEventListener('mousedown', startLongTapCheck);
-    bgPanel.addEventListener('mouseup', cancelLongTapCheck);
-    bgPanel.addEventListener('mouseleave', cancelLongTapCheck);
-    bgPanel.addEventListener('touchstart', startLongTapCheck);
-    bgPanel.addEventListener('touchend', cancelLongTapCheck);
+        // 結果画面
+        function showResult() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('result-text').innerText = `${quizList.length}もん 中 ${score}もん せいかい！`;
+        }
 
-  </script>
+        function backToMenu() {
+            document.getElementById('menu-screen').style.display = 'block';
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            createMenu();
+        }
+
+        // 初回読み込み
+        createMenu();
+    </script>
 </body>
 </html>
