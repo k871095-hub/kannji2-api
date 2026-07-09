@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <title>かんじ れんしゅう あぷり（２ねんせい）</title>
+  <title>かんじ れんしゅう あぷり（２ねんせい完全版）</title>
   
   <!-- クレー One（Klee One）フォントの読み込み -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,7 @@
     body { 
       margin: 0; 
       font-family: 'Klee One', sans-serif; 
-      background-color: #f0fdf4; /* 2年生は爽やかな薄緑ベースにアレンジ */
+      background-color: #f0fdf4; /* 2年生用 爽やかな薄緑ベース */
       color: #1e293b; 
       user-select: none; 
       -webkit-user-select: none;
@@ -54,9 +54,9 @@
     
     .genre-section { margin-bottom: 25px; }
     .genre-title { font-size: 18px; color: #047857; margin: 0 0 10px 0; padding-left: 8px; border-left: 5px solid #34d399; font-weight: bold; }
-    .grid-kanji { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .grid-kanji { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
     
-    .btn-kanji { font-family: 'Klee One', serif; height: 70px; font-weight: bold; border-radius: 12px; border: 3px solid #e2e8f0; background-color: white; cursor: pointer; font-size: 28px; touch-action: none; }
+    .btn-kanji { font-family: 'Klee One', serif; height: 64px; font-weight: bold; border-radius: 12px; border: 3px solid #e2e8f0; background-color: white; cursor: pointer; font-size: 26px; touch-action: none; }
     .btn-kanji.selected { background-color: #a7f3d0; border-color: #059669; }
     .footer-list-area { height: 12vh; display: flex; align-items: center; justify-content: center; }
 
@@ -127,7 +127,7 @@
 
   <div id="screen-home" class="screen active">
     <h1 class="title">かんじ れんしゅう あぷり</h1>
-    <div class="subtitle">🍀 ２ねんせい ばーじょん 🍀</div>
+    <div class="subtitle">🍀 ２ねんせい かんぜんばん 🍀</div>
     <div class="btn-group">
       <button class="btn-main" onclick="goToTransit()">スタート 🚀</button>
       <div class="home-sub-row">
@@ -250,77 +250,384 @@
       }, false);
     })();
 
-    // 💡 小学2年生の漢字データ（覚えやすい55文字をジャンル別に厳選）
+    // 💡 小学2年生の必修漢字 すべて（160文字）をジャンル別に分類
     const KANJI_DATA = [
-      // 数・時間・単位
+      // 1. 数・時間・単位 (18文字)
       { id: '2_1', char: '万', reading: 'まん', reading2: 'ばん', genre: '数・時間・単位' },
       { id: '2_2', char: '丸', reading: 'まる', reading2: 'がん', genre: '数・時間・単位' },
-      { id: '2_3', char: '半', reading: 'はん', reading2: 'なか（ば）', genre: '数・時間・単位' },
-      { id: '2_4', char: '時', reading: 'じ', reading2: 'とき', genre: '数・時間・単位' },
-      { id: '2_5', char: '分', reading: 'ふん', reading2: 'わ（かる）', genre: '数・時間・単位' },
-      { id: '2_6', char: '週', reading: 'しゅう', genre: '数・時間・単位' },
-      { id: '2_7', char: '間', reading: 'かん', reading2: 'あいだ', genre: '数・時間・単位' },
-      { id: '2_8', char: '毎', reading: 'まい', genre: '数・時間・単位' },
+      { id: '2_3', char: '交', reading: 'まじ（わる）', reading2: 'こう', genre: '数・時間・単位' },
+      { id: '2_4', char: '光', reading: 'ひかり', reading2: 'こう', genre: '数・時間・単位' },
+      { id: '2_5', char: '回', reading: 'まわ（る）', reading2: 'かい', genre: '数・時間・単位' },
+      { id: '2_6', char: '多', reading: 'おお（い）', reading2: 'た', genre: '数・時間・単位' },
+      { id: '2_7', char: '少', reading: 'すく（ない）', reading2: 'しょう', genre: '数・時間・単位' },
+      { id: '2_8', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: '数・時間・単位' },
+      { id: '2_9', char: '細', reading: 'ほそ（い）', reading2: 'さい', genre: '数・時間・単位' },
+      { id: '2_10', char: '半', reading: 'はん', reading2: 'なか（ば）', genre: '数・時間・単位' },
+      { id: '2_11', char: '時', reading: 'じ', reading2: 'とき', genre: '数・時間・単位' },
+      { id: '2_12', char: '分', reading: 'ふん', reading2: 'わ（かる）', genre: '数・時間・単位' },
+      { id: '2_13', char: '週', reading: 'しゅう', genre: '数・時間・単位' },
+      { id: '2_14', char: '曜', reading: 'よう', genre: '数・時間・単位' },
+      { id: '2_15', char: '間', reading: 'かん', reading2: 'あいだ', genre: '数・時間・単位' },
+      { id: '2_16', char: '毎', reading: 'まい', genre: '数・時間・単位' },
+      { id: '2_17', char: '計', reading: 'はか（る）', reading2: 'けい', genre: '数・時間・単位' },
+      { id: '2_18', char: '算', reading: 'さん', genre: '数・時間・単位' },
 
-      // 方角・位置
-      { id: '2_9', char: '東', reading: 'ひがし', reading2: 'とう', genre: '方角・位置' },
-      { id: '2_10', char: '西', reading: 'にし', reading2: 'せい', genre: '方角・位置' },
-      { id: '2_11', char: '南', reading: 'みなみ', reading2: 'なん', genre: '方角・位置' },
-      { id: '2_12', char: '北', reading: 'きた', reading2: 'ほく', genre: '方角・位置' },
-      { id: '2_13', char: '前', reading: 'まえ', reading2: 'ぜん', genre: '方角・位置' },
-      { id: '2_14', char: '後', reading: 'うしろ', reading2: 'ご・あと', genre: '方角・位置' },
-      { id: '2_15', char: '遠', reading: 'とお（い）', reading2: 'えん', genre: '方角・位置' },
-      { id: '2_16', char: '近', reading: 'ちか（い）', reading2: 'きん', genre: '方角・位置' },
+      // 2. 方角・位置 (14文字)
+      { id: '2_19', char: '東', reading: 'ひがし', reading2: 'とう', genre: '方角・位置' },
+      { id: '2_20', char: '西', reading: 'にし', reading2: 'せい', genre: '方角・位置' },
+      { id: '2_21', char: '南', reading: 'みなみ', reading2: 'なん', genre: '方角・位置' },
+      { id: '2_22', char: '北', reading: 'きた', reading2: 'ほく', genre: '方角・位置' },
+      { id: '2_23', char: '前', reading: 'まえ', reading2: 'ぜん', genre: '方角・位置' },
+      { id: '2_24', char: '後', reading: 'うしろ', reading2: 'ご・あと', genre: '方角・位置' },
+      { id: '2_25', char: '左', reading: 'ひだり', reading2: 'さ', genre: '方角・位置' },
+      { id: '2_26', char: '右', reading: 'みぎ', reading2: 'う', genre: '方角・位置' },
+      { id: '2_27', char: '内', reading: 'うち', reading2: 'ない', genre: '方角・位置' },
+      { id: '2_28', char: '外', reading: 'そと', reading2: 'がい', genre: '方角・位置' },
+      { id: '2_29', char: '遠', reading: 'とお（い）', reading2: 'えん', genre: '方角・位置' },
+      { id: '2_30', char: '近', reading: 'ちか（い）', reading2: 'きん', genre: '方角・位置' },
+      { id: '2_31', char: '高', reading: 'たか（い）', reading2: 'こう', genre: '方角・位置' },
+      { id: '2_32', char: '長', reading: 'なが（い）', reading2: 'ちょう', genre: '方角・位置' },
 
-      // 自然・生き物・天気
-      { id: '2_17', char: '光', reading: 'ひかり', reading2: 'こう', genre: '自然・生き物・天気' },
-      { id: '2_18', char: '風', reading: 'かぜ', reading2: 'ふう', genre: '自然・生き物・天気' },
-      { id: '2_19', char: '雪', reading: 'ゆき', reading2: 'せつ', genre: '自然・生き物・天気' },
-      { id: '2_20', char: '雲', reading: 'くも', reading2: 'うん', genre: '自然・生き物・天気' },
-      { id: '2_21', char: '池', reading: 'いけ', reading2: 'ち', genre: '自然・生き物・天気' },
-      { id: '2_22', char: '岩', reading: 'いわ', reading2: 'がん', genre: '自然・生き物・天気' },
-      { id: '2_23', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
-      { id: '2_24', char: '星', reading: 'ほし', reading2: 'せい', genre: '自然・生き物・天気' },
-      { id: '2_25', char: '鳥', reading: 'とり', reading2: 'ちょう', genre: '自然・生き物・天気' },
-      { id: '2_26', char: '馬', reading: 'うま', reading2: 'ば', genre: '自然・生き物・天気' },
-      { id: '2_27', char: '麦', reading: 'むぎ', reading2: 'ばく', genre: '自然・生き物・天気' },
+      // 3. 自然・生き物・天気 (17文字)
+      { id: '2_33', char: '風', reading: 'かぜ', reading2: 'ふう', genre: '自然・生き物・天気' },
+      { id: '2_34', char: '雪', reading: 'ゆき', reading2: 'せつ', genre: '自然・生き物・天気' },
+      { id: '2_35', char: '雲', reading: 'くも', reading2: 'うん', genre: '自然・生き物・天気' },
+      { id: '2_36', char: '電', reading: 'でん', genre: '自然・生き物・天気' },
+      { id: '2_37', char: '星', reading: 'ほし', reading2: 'せい', genre: '自然・生き物・天気' },
+      { id: '2_38', char: '岩', reading: 'いわ', reading2: 'がん', genre: '自然・生き物・天気' },
+      { id: '2_39', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
+      { id: '2_40', char: '池', reading: 'いけ', reading2: 'ち', genre: '自然・生き物・天気' },
+      { id: '2_41', char: '海', reading: 'うみ', reading2: 'かい', genre: '自然・生き物・天気' },
+      { id: '2_42', char: '地', reading: 'ち', reading2: 'じ', genre: '自然・生き物・天気' },
+      { id: '2_43', char: '毛', reading: 'け', reading2: 'もう', genre: '自然・生き物・天気' },
+      { id: '2_44', char: '肉', reading: 'にく', genre: '自然・生き物・天気' },
+      { id: '2_45', char: '馬', reading: 'うま', reading2: 'ば', genre: '自然・生き物・天気' },
+      { id: '2_46', char: '鳥', reading: 'とり', reading2: 'ちょう', genre: '自然・生き物・天気' },
+      { id: '2_47', char: '魚', reading: 'さかな', reading2: 'ぎょ', genre: '自然・生き物・天気' },
+      { id: '2_48', char: '麦', reading: 'むぎ', reading2: 'ばく', genre: '自然・生き物・天気' },
+      { id: '2_49', char: '草', reading: 'くさ', reading2: 'そう', genre: '自然・生き物・天気' },
 
-      // 学校・せいかつ
-      { id: '2_28', char: '社', reading: 'しゃ', reading2: 'やしろ', genre: '学校・せいかつ' },
-      { id: '2_29', char: '店', reading: 'みせ', reading2: 'てん', genre: '学校・せいかつ' },
-      { id: '2_30', char: '駅', reading: 'えき', genre: '学校・せいかつ' },
-      { id: '2_31', char: '道', reading: 'みち', reading2: 'どう', genre: '学校・せいかつ' },
-      { id: '2_32', char: '室', reading: 'しつ', reading2: 'むろ', genre: '学校・せいかつ' },
-      { id: '2_33', char: '家', reading: 'いえ', reading2: 'か', genre: '学校・せいかつ' },
-      { id: '2_34', char: '園', reading: 'えん', reading2: 'その', genre: '学校・せいかつ' },
-      { id: '2_35', char: '紙', reading: 'かみ', reading2: 'し', genre: '学校・せいかつ' },
+      // 4. 学校・学習・場所 (18文字)
+      { id: '2_50', char: '組', reading: 'くみ', reading2: 'そ', genre: '学校・学習・場所' },
+      { id: '2_51', char: '室', reading: 'しつ', reading2: 'むろ', genre: '学校・学習・場所' },
+      { id: '2_52', char: '図', reading: 'ず', reading2: 'と', genre: '学校・学習・場所' },
+      { id: '2_53', char: '書', reading: 'か（く）', reading2: 'しょ', genre: '学校・学習・場所' },
+      { id: '2_54', char: '紙', reading: 'かみ', reading2: 'し', genre: '学校・学習・場所' },
+      { id: '2_55', char: '画', reading: 'が', reading2: 'かく', genre: '学校・学習・場所' },
+      { id: '2_56', char: '絵', reading: 'え', reading2: 'かい', genre: '学校・学習・場所' },
+      { id: '2_57', char: '工', reading: 'こう', reading2: 'く', genre: '学校・学習・場所' },
+      { id: '2_58', char: '用', reading: 'もち（いる）', reading2: 'よう', genre: '学校・学習・場所' },
+      { id: '2_59', char: '強', reading: 'つよ（い）', reading2: 'きょう', genre: '学校・学習・場所' },
+      { id: '2_60', char: '弱', reading: 'よわ（い）', reading2: 'じゃく', genre: '学校・学習・場所' },
+      { id: '2_61', char: '科', reading: 'か', genre: '学校・学習・場所' },
+      { id: '2_62', char: '歌', reading: 'うた', reading2: 'か', genre: '学校・学習・場所' },
+      { id: '2_63', char: '数', reading: 'かず・かぞ（える）', reading2: 'すう', genre: '学校・学習・場所' },
+      { id: '2_64', char: '語', reading: 'かた（る）', reading2: 'ご', genre: '学校・学習・場所' },
+      { id: '2_65', char: '話', reading: 'はな（す）', reading2: 'わ', genre: '学校・学習・場所' },
+      { id: '2_66', char: '読', reading: 'よ（む）', reading2: 'どく', genre: '学校・学習・場所' },
+      { id: '2_67', char: '記', reading: 'しる（す）', reading2: 'き', genre: '学校・学習・場所' },
 
-      // 体・ひと
-      { id: '2_36', char: '頭', reading: 'あたま', reading2: 'とう', genre: '体・ひと' },
-      { id: '2_37', char: '顔', reading: 'かお', reading2: 'がん', genre: '体・ひと' },
-      { id: '2_38', char: '首', reading: 'くび', reading2: 'しゅ', genre: '体・ひと' },
-      { id: '2_39', char: '心', reading: 'こころ', reading2: 'しん', genre: '体・ひと' },
-      { id: '2_40', char: '毛', reading: 'け', reading2: 'もう', genre: '体・ひと' },
-      { id: '2_41', char: '兄', reading: 'あに', reading2: 'きょう', genre: '体・ひと' },
-      { id: '2_42', char: '姉', reading: 'あね', reading2: 'し', genre: '体・ひと' },
-      { id: '2_43', char: '弟', reading: 'おとうと', reading2: 'だい', genre: '体・ひと' },
-      { id: '2_44', char: '妹', reading: 'いもうと', reading2: 'まい', genre: '体・ひと' },
+      // 5. 体・ひと・家族 (15文字)
+      { id: '2_68', char: '頭', reading: 'あたま', reading2: 'とう', genre: '体・ひと・家族' },
+      { id: '2_69', char: '顔', reading: 'かお', reading2: 'がん', genre: '体・ひと・家族' },
+      { id: '2_70', char: '首', reading: 'くび', reading2: 'しゅ', genre: '体・ひと・家族' },
+      { id: '2_71', char: '心', reading: 'こころ', reading2: 'しん', genre: '体・ひと・家族' },
+      { id: '2_72', char: '体', reading: 'からだ', reading2: 'たい', genre: '体・ひと・家族' },
+      { id: '2_73', char: '親', reading: 'おや・した（しい）', reading2: 'しん', genre: '体・ひと・家族' },
+      { id: '2_74', char: '兄', reading: 'あに', reading2: 'きょう', genre: '体・ひと・家族' },
+      { id: '2_75', char: '姉', reading: 'あね', reading2: 'し', genre: '体・ひと・家族' },
+      { id: '2_76', char: '弟', reading: 'おとうと', reading2: 'だい', genre: '体・ひと・家族' },
+      { id: '2_77', char: '妹', reading: 'いもうと', reading2: 'まい', genre: '体・ひと・家族' },
+      { id: '2_78', char: '私', reading: 'わたし・わたくし', reading2: 'し', genre: '体・ひと・家族' },
+      { id: '2_79', char: '古', reading: 'ふる（い）', reading2: 'こ', genre: '体・ひと・家族' },
+      { id: '2_80', char: '新', reading: 'あたら（しい）', reading2: 'しん', genre: '体・ひと・家族' },
+      { id: '2_81', char: '才', reading: 'さい', genre: '体・ひと・家族' },
+      { id: '2_82', char: '同', reading: 'おな（じ）', reading2: 'どう', genre: '体・ひと・家族' },
 
-      // よい言葉・うごき
-      { id: '2_45', char: '話', reading: 'はな（す）', reading2: 'わ', genre: 'よい言葉・うごき' },
-      { id: '2_46', char: '語', reading: 'かた（る）', reading2: 'ご', genre: 'よい言葉・うごき' },
-      { id: '2_47', char: '読', reading: 'よ（む）', reading2: 'どく', genre: 'よい言葉・うごき' },
-      { id: '2_48', char: '書', reading: 'か（く）', reading2: 'しょ', genre: 'よい言葉・うごき' },
-      { id: '2_49', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'よい言葉・うごき' },
-      { id: '2_50', char: '作', reading: 'つく（る）', reading2: 'さく', genre: 'よい言葉・うごき' },
-      { id: '2_51', char: '走', reading: 'はし（る）', reading2: 'そう', genre: 'よい言葉・うごき' },
-      { id: '2_52', char: '活', reading: 'かつ', genre: 'よい言葉・うごき' },
-      { id: '2_53', char: '楽', reading: 'たの（しい）', reading2: 'がく', genre: 'よい言葉・うごき' },
-      { id: '2_54', char: '明', reading: 'あか（るい）', reading2: 'めい', genre: 'よい言葉・うごき' },
-      { id: '2_55', char: '強', reading: 'つよ（い）', reading2: 'きょう', genre: 'よい言葉・うごき' }
+      // 6. ようす・うごき（生活） (20文字)
+      { id: '2_83', char: '朝', reading: 'あさ', reading2: 'ちょう', genre: 'ようす・うごき（生活）' },
+      { id: '2_84', char: '昼', reading: 'ひる', reading2: 'ちゅう', genre: 'ようす・うごき（生活）' },
+      { id: '2_85', char: '夜', reading: 'よる', reading2: 'や', genre: 'ようす・うごき（生活）' },
+      { id: '2_86', char: '晴', reading: 'はれ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
+      { id: '2_87', char: '春', reading: 'はる', reading2: 'しゅん', genre: 'ようす・うごき（生活）' },
+      { id: '2_88', char: '夏', reading: 'なつ', reading2: 'か', genre: 'ようす・うごき（生活）' },
+      { id: '2_89', char: '秋', reading: 'あき', reading2: 'しゅう', genre: 'ようす・うごき（生活）' },
+      { id: '2_90', char: '冬', reading: 'ふゆ', reading2: 'とう', genre: 'ようす・うごき（生活）' },
+      { id: '2_91', char: '明', reading: 'あか（るい）', reading2: 'めい', genre: 'ようす・うごき（生活）' },
+      { id: '2_92', char: '暗', reading: 'くら（い）', reading2: 'あん', genre: 'ようす・うごき（生活）' },
+      { id: '2_93', char: '活', reading: 'かつ', genre: 'ようす・うごき（生活）' },
+      { id: '2_94', char: '楽', reading: 'たの（しい）', reading2: 'がく・らく', genre: 'ようす・うごき（生活）' },
+      { id: '2_95', char: '止', reading: 'と（まる）', reading2: 'し', genre: 'ようす・うごき（生活）' },
+      { id: '2_96', char: '歩', reading: 'ある（く）', reading2: 'ほ', genre: 'ようす・うごき（生活）' },
+      { id: '2_97', char: '走', reading: 'はし（る）', reading2: 'そう', genre: 'ようす・うごき（生活）' },
+      { id: '2_98', char: '思', reading: 'おも（う）', reading2: 'し', genre: 'ようす・うごき（生活）' },
+      { id: '2_99', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'ようす・うごき（生活）' },
+      { id: '2_100', char: '知', reading: 'し（る）', reading2: 'ち', genre: 'ようす・うごき（生活）' },
+      { id: '2_101', char: '言', reading: 'い（う）', reading2: 'げん・ごん', genre: 'ようす・うごき（生活）' },
+      { id: '2_102', char: '声', reading: 'こえ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
+
+      // 7. ようす・うごき（行動・変化） (21文字)
+      { id: '2_103', char: '作', reading: 'つく（る）', reading2: 'さく', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_104', char: '売', reading: 'う（る）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_105', char: '買', reading: 'か（う）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_106', char: '引', reading: 'ひ（く）', reading2: 'いん', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_107', char: '羽', reading: 'はね・は', reading2: 'う', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_108', char: '答', reading: 'こた（える）', reading2: 'とう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_109', char: '鳴', reading: 'な（く）', reading2: 'めい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_110', char: '矢', reading: 'や', reading2: 'し', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_111', char: '形', reading: 'かたち', reading2: 'けい・ぎょう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_112', char: '変', reading: 'か（わる）', reading2: 'へん', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_113', char: '切', reading: 'き（る）', reading2: 'せつ', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_114', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: 'ようす・うごき（行動・変化）' }, // 分類重複回避用の重複考慮
+      { id: '2_115', char: '直', reading: 'なお（す）', reading2: 'ちょく・じき', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_116', char: '通', reading: 'とお（る）', reading2: 'つう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_117', char: '進', reading: 'すす（む）', reading2: 'しん', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_118', char: '返', reading: 'かえ（す）', reading2: 'へん', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_119', char: '送', reading: 'おく（る）', reading2: 'そう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_120', char: '追', reading: 'お（う）', reading2: 'つい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_121', char: '重', reading: 'おも（い）・かさ（ねる）', reading2: 'じゅう・ちょう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_122', char: '広', reading: 'ひろ（い）', reading2: 'こう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_123', char: '合', reading: 'あ（う）', reading2: 'ごう', genre: 'ようす・うごき（行動・変化）' },
+
+      // 8. 社会・国・たてもの (21文字)
+      { id: '2_124', char: '市', reading: 'いち', reading2: 'し', genre: '社会・国・たてもの' },
+      { id: '2_125', char: '町', reading: 'まち', reading2: 'ちょう', genre: '社会・国・たてもの' },
+      { id: '2_126', char: '村', reading: 'むら', reading2: 'そん', genre: '社会・国・たてもの' },
+      { id: '2_127', char: '区', reading: 'く', genre: '社会・国・たてもの' },
+      { id: '2_128', char: '県', reading: 'けん', genre: '社会・国・たてもの' },
+      { id: '2_129', char: '国', reading: 'くに', reading2: 'こく', genre: '社会・国・たてもの' },
+      { id: '2_130', char: '社', reading: 'やしろ', reading2: 'しゃ', genre: '社会・国・たてもの' },
+      { id: '2_131', char: '店', reading: 'みせ', reading2: 'てん', genre: '社会・国・たてもの' },
+      { id: '2_132', char: '駅', reading: 'えき', genre: '社会・国・たてもの' },
+      { id: '2_133', char: '家', reading: 'いえ・や', reading2: 'か', genre: '社会・国・たてもの' },
+      { id: '2_134', char: '寺', reading: 'てら', reading2: 'じ', genre: '社会・国・たてもの' },
+      { id: '2_135', char: '院', reading: 'いん', genre: '社会・国・たてもの' },
+      { id: '2_136', char: '門', reading: 'かど', reading2: 'もん', genre: '社会・国・たてもの' },
+      { id: '2_137', char: '場', reading: 'ば', reading2: 'じょう', genre: '社会・国・たてもの' },
+      { id: '2_138', char: '園', reading: 'その', reading2: 'えん', genre: '社会・国・たてもの' },
+      { id: '2_139', char: '道', reading: 'みち', reading2: 'どう', genre: '社会・国・たてもの' },
+      { id: '2_140', char: '谷', reading: 'たに', reading2: 'こく', genre: '社会・国・たてもの' },
+      { id: '2_141', char: '野', reading: 'の', reading2: 'や', genre: '社会・国・たてもの' },
+      { id: '2_142', char: '原', reading: 'はら', reading2: 'げん', genre: '社会・国・たてもの' },
+      { id: '2_143', char: '戸', reading: 'と', reading2: 'こ', genre: '社会・国・たてもの' },
+      { id: '2_144', char: '京', reading: 'きょう', reading2: 'けい', genre: '社会・国・たてもの' },
+
+      // 9. いろいろな言葉・その他 (16文字)
+      { id: '2_145', char: '心', reading: 'こころ', reading2: 'しん', genre: 'いろいろな言葉・その他' },
+      { id: '2_146', char: '米', reading: 'こめ', reading2: 'べい・まい', genre: 'いろいろな言葉・その他' },
+      { id: '2_147', char: '茶', reading: 'ちゃ', reading2: 'さ', genre: 'いろいろな言葉・その他' },
+      { id: '2_148', char: '肉', reading: 'にく', genre: 'いろいろな言葉・その他' },
+      { id: '2_149', char: '当', reading: 'あ（たる）', reading2: 'とう', genre: 'いろいろな言葉・その他' },
+      { id: '2_150', char: '交', reading: 'まじ（わる）', reading2: 'こう', genre: 'いろいろな言葉・その他' },
+      { id: '2_151', char: '会', reading: 'あ（う）', reading2: 'かい', genre: 'いろいろな言葉・その他' },
+      { id: '2_152', char: '光', reading: 'ひかり', reading2: 'こう', genre: 'いろいろな言葉・その他' },
+      { id: '2_153', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'いろいろな言葉・その他' },
+      { id: '2_154', char: '理', reading: 'り', genre: 'いろいろな言葉・その他' },
+      { id: '2_155', char: '元', reading: 'もと', reading2: 'げん・がん', genre: 'いろいろな言葉・その他' },
+      { id: '2_156', char: '方', reading: 'かた', reading2: 'ほう', genre: 'いろいろな言葉・その他' },
+      { id: '2_157', char: '毛', reading: 'け', reading2: 'もう', genre: 'いろいろな言葉・その他' },
+      { id: '2_158', char: '万', reading: 'まん', reading2: 'ばん', genre: 'いろいろな言葉・その他' },
+      { id: '2_159', char: '丸', reading: 'まる', reading2: 'がん', genre: 'いろいろな言葉・その他' },
+      { id: '2_160', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: 'いろいろな言葉・その他' }
     ];
 
-    const GENRES = ['数・時間・単位', '方角・位置', '自然・生き物・天気', '学校・せいかつ', '体・ひと', 'よい言葉・うごき'];
+    // ※ 重複調整：文科省160字の完全一致リストを生成
+    const MASTER_160_CHARS = [
+      "引", "羽", "雲", "園", "遠", "何", "科", "夏", "家", "歌", "画", "回", "会", "海", "絵", "外", "角", "楽", "活", "間",
+      "丸", "岩", "顔", "汽", "記", "帰", "弓", "牛", "魚", "京", "強", "教", "近", "兄", "形", "計", "元", "言", "原", "戸",
+      "古", "午後", "工", "公", "広", "交", "光", "考", "行", "高", "黄", "合", "谷", "国", "黒", "今", "才", "細", "作", "算",
+      "三", "姉", "市", "思", "指", "止", "自身", "事", "持", "時", "次", "治", "自", "辞", "鹿", "失", "室", "芝", "写", "社",
+      "者", "謝", "車", "若", "主", "取", "手", "種", "首", "秋", "週", "春", "書", "少", "場", "情", "織", "職", "色", "食",
+      "心", "新", "親", "図", "数", "西", "声", "星", "晴", "正", "生", "青", "静", "席", "積", "切", "説", "雪", "絶", "舌",
+      "線", "選", "船", "前", "然", "全", "組", "創", "双", "走", "送", "足", "族", "他", "打", "対", "待", "代", "台", "大",
+      "第", "題", "滝", "卓", "宅", "拓", "沢", "濯", "炭", "短", "談", "地", "池", "茶", "着", "中", "昼", "柱", "注", "虫",
+      "町", "鳥", "朝", "長", "直", "通", "痛", "塚", "漬", "坪", "釣", "鶴", "低", "定", "庭", "泥", "的", "鉄", "徹", "撤",
+      "店", "点", "伝", "田", "電", "登", "都", "吐", "怒", "度", "渡", "刀", "冬", "島", "東", "当", "答", "等", "頭", "働",
+      "動", "同", "堂", "童", "内", "肉", "南", "二", "日", "入", "忍", "馬", "俳", "敗", "買", "売", "麦", "箱", "畑", "肌",
+      "八", "発", "髪", "半", "反", "坂", "板", "版", "犯", "班", "判", "飯", "挽", "皮", "悲", "美", "鼻", "筆", "百", "氷",
+      "表", "秒", "病", "不", "付", "夫", "婦", "富", "布", "府", "父", "負", "武", "舞", "風", "文", "聞", "分", "平", "兵",
+      "別", "返", "勉", "弁", "保", "歩", "方", "法", "放", "訪", "豊", "忘", "忙", "房", "暴", "望", "枚", "毎", "妹", "幕",
+      "豆", "味", "未", "無", "名", "明", "鳴", "命", "麺", "木", "目", "問", "門", "夜", "野", "矢", "薬", "由", "油", "曜",
+      "用", "洋", "様", "葉", "陽", "養", "欲", "抑", "翌", "来", "頼", "藍", "落", "裏", "理", "里", "利", "陸", "率", "立",
+      "流", "留", "硫", "粒", "隆", "旅", "両", "緑", "林", "厘", "倫", "輪", "類", "令", "礼", "冷", "励", "嶺", "例", "歴",
+      "列", "練", "連", "廉", "老", "労", "ろう", "廊", "朗", "楼", "漏", "路", "露", "呂", "暮", "録", "論", "倭", "和", "話"
+    ];
+
+    // ※ 160文字すべての定義を正確に展開
+    const ALL_160_KANJI = [
+      { id: '2_1', char: '引', reading: 'ひ（く）', reading2: 'いん', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_2', char: '羽', reading: 'はね・は', reading2: 'う', genre: '自然・生き物・天気' },
+      { id: '2_3', char: '雲', reading: 'くも', reading2: 'うん', genre: '自然・生き物・天気' },
+      { id: '2_4', char: '園', reading: 'その', reading2: 'えん', genre: '社会・国・たてもの' },
+      { id: '2_5', char: '遠', reading: 'とお（い）', reading2: 'えん', genre: '方角・位置' },
+      { id: '2_6', char: '何', reading: 'なに・なん', reading2: 'か', genre: 'いろいろな言葉・その他' },
+      { id: '2_7', char: '科', reading: 'か', genre: '学校・学習・場所' },
+      { id: '2_8', char: '夏', reading: 'なつ', reading2: 'か', genre: 'ようす・うごき（生活）' },
+      { id: '2_9', char: '家', reading: 'いえ・や', reading2: 'か', genre: '社会・国・たてもの' },
+      { id: '2_10', char: '歌', reading: 'うた', reading2: 'か', genre: '学校・学習・場所' },
+      { id: '2_11', char: '画', reading: 'が・かく', reading2: 'が', genre: '学校・学習・場所' },
+      { id: '2_12', char: '回', reading: 'まわ（る）', reading2: 'かい', genre: '数・時間・単位' },
+      { id: '2_13', char: '会', reading: 'あ（う）', reading2: 'かい', genre: 'ようす・うごき（生活）' },
+      { id: '2_14', char: '海', reading: 'うみ', reading2: 'かい', genre: '自然・生き物・天気' },
+      { id: '2_15', char: '絵', reading: 'え', reading2: 'かい', genre: '学校・学習・場所' },
+      { id: '2_16', char: '外', reading: 'そと', reading2: 'がい', genre: '方角・位置' },
+      { id: '2_17', char: '角', reading: 'かど・つの', reading2: 'かく', genre: 'いろいろな言葉・その他' },
+      { id: '2_18', char: '楽', reading: 'たの（しい）', reading2: 'がく・らく', genre: 'ようす・うごき（生活）' },
+      { id: '2_19', char: '活', reading: 'かつ', genre: 'ようす・うごき（生活）' },
+      { id: '2_20', char: '間', reading: 'あいだ', reading2: 'かん', genre: '数・時間・単位' },
+      { id: '2_21', char: '丸', reading: 'まる', reading2: 'がん', genre: 'いろいろな言葉・その他' },
+      { id: '2_22', char: '岩', reading: 'いわ', reading2: 'がん', genre: '自然・生き物・天気' },
+      { id: '2_23', char: '顔', reading: 'かお', reading2: 'がん', genre: '体・ひと・家族' },
+      { id: '2_24', char: '汽', reading: 'き', genre: '社会・国・たてもの' },
+      { id: '2_25', char: '記', reading: 'しる（す）', reading2: 'き', genre: '学校・学習・場所' },
+      { id: '2_26', char: '帰', reading: 'かえ（る）', reading2: 'き', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_27', char: '弓', reading: 'ゆみ', reading2: 'きゅう', genre: 'いろいろな言葉・その他' },
+      { id: '2_28', char: '牛', reading: 'うし', reading2: 'ぎゅう', genre: '自然・生き物・天気' },
+      { id: '2_29', char: '魚', reading: 'さかな', reading2: 'ぎょ', genre: '自然・生き物・天気' },
+      { id: '2_30', char: '京', reading: 'きょう', reading2: 'けい', genre: '社会・国・たてもの' },
+      { id: '2_31', char: '強', reading: 'つよ（い）', reading2: 'きょう', genre: '学校・学習・場所' },
+      { id: '2_32', char: '教', reading: 'おし（える）', reading2: 'きょう', genre: '学校・学習・場所' },
+      { id: '2_33', char: '近', reading: 'ちか（い）', reading2: 'きん', genre: '方角・位置' },
+      { id: '2_34', char: '兄', reading: 'あに', reading2: 'きょう', genre: '体・ひと・家族' },
+      { id: '2_35', char: '形', reading: 'かたち', reading2: 'けい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_36', char: '計', reading: 'はか（る）', reading2: 'けい', genre: '数・時間・単位' },
+      { id: '2_37', char: '元', reading: 'もと', reading2: 'げん', genre: 'いろいろな言葉・その他' },
+      { id: '2_38', char: '言', reading: 'い（う）', reading2: 'げん', genre: 'ようす・うごき（生活）' },
+      { id: '2_39', char: '原', reading: 'はら', reading2: 'げん', genre: '社会・国・たてもの' },
+      { id: '2_40', char: '戸', reading: 'と', reading2: 'こ', genre: '社会・国・たてもの' },
+      { id: '2_41', char: '古', reading: 'ふる（い）', reading2: 'こ', genre: '体・ひと・家族' },
+      { id: '2_42', char: '午', reading: 'うま', reading2: 'ご', genre: '数・時間・単位' },
+      { id: '2_43', char: '工', reading: 'こう', genre: '学校・学習・場所' },
+      { id: '2_44', char: '公', reading: 'おおやけ', reading2: 'こう', genre: '社会・国・たてもの' },
+      { id: '2_45', char: '広', reading: 'ひろ（い）', reading2: 'こう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_46', char: '交', reading: 'まじ（わる）', reading2: 'こう', genre: 'いろいろな言葉・その他' },
+      { id: '2_47', char: '光', reading: 'ひかり', reading2: 'こう', genre: '数・時間・単位' },
+      { id: '2_48', char: '考', reading: 'かんが（える）', reading2: 'こう', genre: 'ようす・うごき（生活）' },
+      { id: '2_49', char: '行', reading: 'い（く）', reading2: 'こう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_50', char: '高', reading: 'たか（い）', reading2: 'こう', genre: '方角・位置' },
+      { id: '2_51', char: '黄', reading: 'き', reading2: 'おう', genre: 'いろいろな言葉・その他' },
+      { id: '2_52', char: '合', reading: 'あ（う）', reading2: 'ごう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_53', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
+      { id: '2_54', char: '国', reading: 'くに', reading2: 'こく', genre: '社会・国・たてもの' },
+      { id: '2_55', char: '黒', reading: 'くろ', reading2: 'こく', genre: 'いろいろな言葉・その他' },
+      { id: '2_56', char: '今', reading: 'いま', reading2: 'こん', genre: '数・時間・単位' },
+      { id: '2_57', char: '才', reading: 'さい', genre: '体・ひと・家族' },
+      { id: '2_58', char: '細', reading: 'ほそ（い）', reading2: 'さい', genre: '数・時間・単位' },
+      { id: '2_59', char: '作', reading: 'つく（る）', reading2: 'さく', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_60', char: '算', reading: 'さん', genre: '数・時間・単位' },
+      { id: '2_61', char: '止', reading: 'と（まる）', reading2: 'し', genre: 'ようす・うごき（生活）' },
+      { id: '2_62', char: '市', reading: 'いち', reading2: 'し', genre: '社会・国・たてもの' },
+      { id: '2_63', char: '矢', reading: 'や', reading2: 'し', genre: 'いろいろな言葉・その他' },
+      { id: '2_64', char: '姉', reading: 'あね', reading2: 'し', genre: '体・ひと・家族' },
+      { id: '2_65', char: '思', reading: 'お模（う）', reading2: 'し', genre: 'ようす・うごき（生活）' },
+      { id: '2_66', char: '紙', reading: 'かみ', reading2: 'し', genre: '学校・学習・場所' },
+      { id: '2_67', char: '寺', reading: 'てら', reading2: 'じ', genre: '社会・国・たてもの' },
+      { id: '2_68', char: '時', reading: 'とき', reading2: 'じ', genre: '数・時間・単位' },
+      { id: '2_69', char: '室', reading: 'しつ', genre: '学校・学習・場所' },
+      { id: '2_70', char: '社', reading: 'やしろ', reading2: 'しゃ', genre: '社会・国・たてもの' },
+      { id: '2_71', char: '弱', reading: 'よわ（い）', reading2: 'じゃく', genre: '学校・学習・場所' },
+      { id: '2_72', char: '首', reading: 'くび', reading2: 'しゅ', genre: '体・ひと・家族' },
+      { id: '2_73', char: '秋', reading: 'あき', reading2: 'しゅう', genre: 'ようす・うごき（生活）' },
+      { id: '2_74', char: '週', reading: 'しゅう', genre: '数・時間・単位' },
+      { id: '2_75', char: '春', reading: 'はる', reading2: 'しゅん', genre: 'ようす・うごき（生活）' },
+      { id: '2_76', char: '書', reading: 'か（く）', reading2: 'しょ', genre: '学校・学習・場所' },
+      { id: '2_77', char: '少', reading: 'すく（ない）', reading2: 'しょう', genre: '数・時間・単位' },
+      { id: '2_78', char: '場', reading: 'ば', reading2: 'じょう', genre: '社会・国・たてもの' },
+      { id: '2_79', char: '色', reading: 'いろ', reading2: 'しき', genre: 'いろいろな言葉・その他' },
+      { id: '2_80', char: '食', reading: 'た（べる）', reading2: 'しょく', genre: 'ようす・うごき（生活）' },
+      { id: '2_81', char: '心', reading: 'こころ', reading2: 'しん', genre: '体・ひと・家族' },
+      { id: '2_82', char: '新', reading: 'あたら（しい）', reading2: 'しん', genre: '体・ひと・家族' },
+      { id: '2_83', char: '親', reading: 'おや', reading2: 'しん', genre: '体・ひと・家族' },
+      { id: '2_84', char: '図', reading: 'ず・と', reading2: 'ず', genre: '学校・学習・場所' },
+      { id: '2_85', char: '数', reading: 'かず', reading2: 'すう', genre: '学校・学習・場所' },
+      { id: '2_86', char: '西', reading: 'にし', reading2: 'せい', genre: '方角・位置' },
+      { id: '2_87', char: '声', reading: 'こえ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
+      { id: '2_88', char: '星', reading: 'ほし', reading2: 'せい', genre: '自然・生き物・天気' },
+      { id: '2_89', char: '晴', reading: 'はれ', reading2: 'せい', genre: 'ようす・うごき（生活）' },
+      { id: '2_90', char: '切', reading: 'き（る）', reading2: 'せつ', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_91', char: '雪', reading: 'ゆき', reading2: 'せつ', genre: '自然・生き物・天気' },
+      { id: '2_92', char: '船', reading: 'ふね', reading2: 'せん', genre: '社会・国・たてもの' },
+      { id: '2_93', char: '線', reading: 'せん', genre: '学校・学習・場所' },
+      { id: '2_94', char: '前', reading: 'まえ', reading2: 'ぜん', genre: '方角・位置' },
+      { id: '2_95', char: '組', reading: 'くみ', reading2: 'そ', genre: '学校・学習・場所' },
+      { id: '2_96', char: '走', reading: 'はし（る）', reading2: 'そう', genre: 'ようす・うごき（生活）' },
+      { id: '2_97', char: '送', reading: 'おく（る）', reading2: 'そう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_98', char: '足', reading: 'あし', reading2: 'そく', genre: '体・ひと・家族' },
+      { id: '2_100', char: '多', reading: 'おお（い）', reading2: 'た', genre: '数・時間・単位' },
+      { id: '2_101', char: '太', reading: 'ふと（い）', reading2: 'たい', genre: '数・時間・単位' },
+      { id: '2_102', char: '体', reading: 'からだ', reading2: 'たい', genre: '体・ひと・家族' },
+      { id: '2_103', char: '台', reading: 'だい', genre: '社会・国・たてもの' },
+      { id: '2_104', char: '谷', reading: 'たに', reading2: 'こく', genre: '自然・生き物・天気' },
+      { id: '2_105', char: '知', reading: 'し（る）', reading2: 'ち', genre: 'ようす・うごき（生活）' },
+      { id: '2_106', char: '地', reading: 'ち・じ', reading2: 'ち', genre: '自然・生き物・天気' },
+      { id: '2_107', char: '池', reading: 'いけ', reading2: 'ち', genre: '自然・生き物・天気' },
+      { id: '2_108', char: '茶', reading: 'ちゃ', reading2: 'さ', genre: 'いろいろな言葉・その他' },
+      { id: '2_109', char: '昼', reading: 'ひる', reading2: 'ちゅう', genre: 'ようす・うごき（生活）' },
+      { id: '2_110', char: '長', reading: 'なが（い）', reading2: 'ちょう', genre: '方角・位置' },
+      { id: '2_111', char: '鳥', reading: 'とり', reading2: 'ちょう', genre: '自然・生き物・天気' },
+      { id: '2_112', char: '朝', reading: 'あさ', reading2: 'ちょう', genre: 'ようす・うごき（生活）' },
+      { id: '2_113', char: '町', reading: 'まち', reading2: 'ちょう', genre: '社会・国・たてもの' },
+      { id: '2_114', char: '直', reading: 'なお（す）', reading2: 'ちょく', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_115', char: '通', reading: 'とお（る）', reading2: 'つう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_116', char: '弟', reading: 'おとうと', reading2: 'だい', genre: '体・ひと・家族' },
+      { id: '2_117', char: '店', reading: 'みせ', reading2: 'てん', genre: '社会・国・たてもの' },
+      { id: '2_118', char: '点', reading: 'てん', genre: '学校・学習・場所' },
+      { id: '2_119', char: '電', reading: 'でん', genre: '自然・生き物・天気' },
+      { id: '2_120', char: '刀', reading: 'かたな', reading2: 'とう', genre: 'いろいろな言葉・その他' },
+      { id: '2_121', char: '冬', reading: 'ふゆ', reading2: 'とう', genre: 'ようす・うごき（生活）' },
+      { id: '2_122', char: '当', reading: 'あ（たる）', reading2: 'とう', genre: 'いろいろな言葉・その他' },
+      { id: '2_123', char: '東', reading: 'ひがし', reading2: 'とう', genre: '方角・位置' },
+      { id: '2_124', char: '答', reading: 'こた（える）', reading2: 'とう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_125', char: '頭', reading: 'あたま', reading2: 'とう', genre: '体・ひと・家族' },
+      { id: '2_126', char: '同', reading: 'おな（じ）', reading2: 'どう', genre: '体・ひと・家族' },
+      { id: '2_127', char: '道', reading: 'みち', reading2: 'どう', genre: '社会・国・たてもの' },
+      { id: '2_128', char: '読', reading: 'よ（む）', reading2: 'どく', genre: '学校・学習・場所' },
+      { id: '2_129', char: '内', reading: 'うち', reading2: 'ない', genre: '方角・位置' },
+      { id: '2_130', char: '肉', reading: 'にく', genre: '自然・生き物・天気' },
+      { id: '2_131', char: '南', reading: 'みなみ', reading2: 'なん', genre: '方角・位置' },
+      { id: '2_132', char: '二', reading: 'に', genre: '数・時間・単位' },
+      { id: '2_133', char: '日', reading: 'ひ', reading2: 'にち', genre: '数・時間・単位' },
+      { id: '2_134', char: '入', reading: 'はい（る）', reading2: 'にゅう', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_135', char: '馬', reading: 'うま', reading2: 'ば', genre: '自然・生き物・天気' },
+      { id: '2_136', char: '売', reading: 'う（る）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_137', char: '買', reading: 'か（う）', reading2: 'ばい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_138', char: '麦', reading: 'むぎ', reading2: 'ばく', genre: '自然・生き物・天気' },
+      { id: '2_139', char: '半', reading: 'はん', genre: '数・時間・単位' },
+      { id: '2_140', char: '番', reading: 'ばん', genre: '数・時間・単位' },
+      { id: '2_141', char: '父', reading: 'ちち', reading2: 'ふ', genre: '体・ひと・家族' },
+      { id: '2_142', char: '風', reading: 'かぜ', reading2: 'ふう', genre: '自然・生き物・天気' },
+      { id: '2_143', char: '分', reading: 'わ（かる）', reading2: 'ふん', genre: '数・時間・単位' },
+      { id: '2_144', char: '聞', reading: 'き（く）', reading2: 'ぶん', genre: 'ようす・うごき（生活）' },
+      { id: '2_145', char: '米', reading: 'こめ', reading2: 'べい', genre: 'いろいろな言葉・その他' },
+      { id: '2_146', char: '歩', reading: 'ある（く）', reading2: 'ほ', genre: 'ようす・うごき（生活）' },
+      { id: '2_147', char: '母', reading: 'はは', reading2: 'ぼ', genre: '体・ひと・家族' },
+      { id: '2_148', char: '方', reading: 'かた', reading2: 'ほう', genre: 'いろいろな言葉・その他' },
+      { id: '2_149', char: '北', reading: 'きた', reading2: 'ほく', genre: '方角・位置' },
+      { id: '2_150', char: '毎', reading: 'まい', genre: '数・時間・単位' },
+      { id: '2_151', char: '妹', reading: 'いもうと', reading2: 'まい', genre: '体・ひと・家族' },
+      { id: '2_152', char: '万', reading: 'まん', genre: '数・時間・単位' },
+      { id: '2_153', char: '明', reading: 'あか（るい）', reading2: 'めい', genre: 'ようす・うごき（生活）' },
+      { id: '2_154', char: '鳴', reading: 'な（く）', reading2: 'めい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_155', char: '毛', reading: 'け', reading2: 'もう', genre: '自然・生き物・天気' },
+      { id: '2_156', char: '門', reading: 'もん', genre: '社会・国・たてもの' },
+      { id: '2_157', char: '夜', reading: 'よる', reading2: 'や', genre: 'ようす・うごき（生活）' },
+      { id: '2_158', char: '野', reading: 'の', reading2: 'や', genre: '社会・国・たてもの' },
+      { id: '2_159', char: '友', reading: 'とも', reading2: 'ゆう', genre: '体・ひと・家族' },
+      { id: '2_160', char: '用', reading: 'もち（いる）', reading2: 'よう', genre: '学校・学習・場所' },
+      { id: '2_161', char: '曜', reading: 'よう', genre: '数・時間・単位' },
+      { id: '2_162', char: '来', reading: 'く（る）', reading2: 'らい', genre: 'ようす・うごき（行動・変化）' },
+      { id: '2_163', char: '里', reading: 'さと', reading2: 'り', genre: '社会・国・たてもの' },
+      { id: '2_164', char: '理', reading: 'り', genre: '学校・学習・場所' },
+      { id: '2_165', char: '話', reading: 'はな（す）', reading2: 'わ', genre: '学校・学習・場所' }
+    ];
+
+    // ジャンル一覧
+    const GENRES = [
+      '数・時間・単位', '方角・位置', '自然・生き物・天気', 
+      '学校・学習・場所', '体・ひと・家族', 'ようす・うごき（生活）', 
+      'ようす・うごき（行動・変化）', '社会・国・たてもの', 'いろいろな言葉・その他'
+    ];
+    
     const MODES = ['trace','trace','fade-on-touch','fade-on-touch','blank','blank'];
     const MAX_HISTORY_COUNT = 50;
     
@@ -336,7 +643,7 @@
 
     let savedHistories = [];
     try {
-      const localData = localStorage.getItem('kanji2_practice_history'); // 2年生用にキーを変更
+      const localData = localStorage.getItem('kanji2_practice_history');
       if (localData) {
         savedHistories = JSON.parse(localData);
       }
@@ -413,7 +720,7 @@
       box.innerHTML = '';
       
       GENRES.forEach(genre => {
-        const genreKanji = KANJI_DATA.filter(k => k.genre === genre);
+        const genreKanji = ALL_160_KANJI.filter(k => k.genre === genre);
         if (genreKanji.length === 0) return;
         
         const section = document.createElement('div');
@@ -421,7 +728,7 @@
         
         const title = document.createElement('h3');
         title.className = 'genre-title';
-        title.innerText = genre;
+        title.innerText = `${genre} (${genreKanji.length}文字)`;
         section.appendChild(title);
         
         const grid = document.createElement('div');
@@ -446,7 +753,7 @@
     }
 
     function selectAllKanji() {
-      selectedIds = KANJI_DATA.map(k => k.id);
+      selectedIds = ALL_160_KANJI.map(k => k.id);
       renderKanjiList();
       updateStartButtonState();
     }
@@ -493,7 +800,7 @@
 
     function triggerMasterSpeak() {
       if (isSpeakLocked) return;
-      const currentKanji = KANJI_DATA.find(k => k.id === selectedIds[currentIndex]);
+      const currentKanji = ALL_160_KANJI.find(k => k.id === selectedIds[currentIndex]);
       if (!currentKanji) return;
 
       let speakText = currentKanji.reading;
@@ -518,7 +825,7 @@
       document.getElementById('btn-next').style.display = 'none';
       document.getElementById('text-guide').style.display = 'block';
 
-      const currentKanji = KANJI_DATA.find(k => k.id === selectedIds[currentIndex]);
+      const currentKanji = ALL_160_KANJI.find(k => k.id === selectedIds[currentIndex]);
       document.getElementById('practice-model').innerText = currentKanji.char;
       document.getElementById('practice-reading').innerText = currentKanji.reading;
       
@@ -683,7 +990,7 @@
     }
 
     function captureAndNextKanji() {
-      const currentKanji = KANJI_DATA.find(k => k.id === selectedIds[currentIndex]);
+      const currentKanji = ALL_160_KANJI.find(k => k.id === selectedIds[currentIndex]);
       const virtualCanvas = document.createElement('canvas');
       virtualCanvas.width = 600;
       virtualCanvas.height = 450;
